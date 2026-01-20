@@ -33,8 +33,6 @@
     "test:run": "vitest run",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run clean && npm run build",
-    "prebuild": "npm run prisma:generate && npm run proxyPage:generate",
-    "postbuild": "node scripts/patch-prisma-imports.js",
     "preversion": "npm run build",
     "postversion": "git push",
     "deploy": "npm run build && npm publish --access public"
