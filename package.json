@@ -1,0 +1,43 @@
+{
+  "name": "cfhg-fuzzy-dates",
+  "version": "1.0.0",
+  "description": "Parses imprecise date strings into a structured form that can be normalized, indexed, searched, and ordered while preserving the original input.",
+  "homepage": "https://github.com/FHSS-Web-Team/CFHG-fuzzy-dates#readme",
+  "bugs": {
+    "url": "https://github.com/FHSS-Web-Team/CFHG-fuzzy-dates/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FHSS-Web-Team/CFHG-fuzzy-dates.git"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "license": "MIT",
+  "author": "",
+  "type": "module",
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0",
+    "vitest": "^4.0.0"
+  }
+}
