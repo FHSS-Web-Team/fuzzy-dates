@@ -42,7 +42,6 @@ const hydrated = FuzzyDate.fromJSON(json);
 - `FuzzyDate.parse(input: string): Result<FuzzyDate, string>` — non-throwing parse; errors come back as `{ ok: false, error }`.
 - `FuzzyDate.fromJSON(model: FuzzyDateModel)` — rebuild from the canonical JSON model.
 - `FuzzyDate` instance properties:
-  - `original` — original input string.
   - `normalized` — normalized human-readable string.
   - `lowerBound` / `upperBound` — inclusive Date bounds (or `null` for unbounded).
   - `collationKey` — sortable string aligned to chronological order.

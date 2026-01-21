@@ -49,7 +49,6 @@ export type FuzzyDateValue = {
 };
 
 export type FuzzyDateModel = {
-  original: string;
   modifier: FuzzyDateModifier;
   start: FuzzyDateValue;
   end: FuzzyDateValue;

@@ -66,15 +66,6 @@ export class FuzzyDate {
   }
 
   /**
-   * The original human-readable input string used to construct this fuzzy date.
-   *
-   * This value is preserved verbatim and is not normalized or modified.
-   */
-  get original() {
-    return this._model.original;
-  }
-
-  /**
    * GEDCOM X formal date representation of this fuzzy date.
    *
    * This value is suitable for interoperability with genealogy systems

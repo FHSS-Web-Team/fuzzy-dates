@@ -29,15 +29,15 @@ export function parse(input: string) {
     .replace(/\s+/g, ' ') // collapses multiple spaces to a single space
     .trim(); // Removes trailing and leading spaces
 
-  if (cleanedInput.startsWith('before ')) return before(cleanedInput, input);
-  if (cleanedInput.startsWith('after ')) return after(cleanedInput, input);
-  if (cleanedInput.startsWith('about ')) return about(cleanedInput, input);
-  if (cleanedInput.startsWith('between ')) return between(cleanedInput, input);
-  if (cleanedInput.startsWith('from ')) return from(cleanedInput, input);
-  if (cleanedInput.startsWith('early ')) return early(cleanedInput, input);
-  if (cleanedInput.startsWith('mid ')) return mid(cleanedInput, input);
-  if (cleanedInput.startsWith('late ')) return late(cleanedInput, input);
-  return none(cleanedInput, input);
+  if (cleanedInput.startsWith('before ')) return before(cleanedInput);
+  if (cleanedInput.startsWith('after ')) return after(cleanedInput);
+  if (cleanedInput.startsWith('about ')) return about(cleanedInput);
+  if (cleanedInput.startsWith('between ')) return between(cleanedInput);
+  if (cleanedInput.startsWith('from ')) return from(cleanedInput);
+  if (cleanedInput.startsWith('early ')) return early(cleanedInput);
+  if (cleanedInput.startsWith('mid ')) return mid(cleanedInput);
+  if (cleanedInput.startsWith('late ')) return late(cleanedInput);
+  return none(cleanedInput);
 }
 
 // Helpers

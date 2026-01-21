@@ -2,13 +2,12 @@ import { getTimes } from '.';
 import { ok, err, DATE_NEG_INFINITY, DATE_POS_INFINITY } from '../types';
 import { stringToDate } from './stringToDate';
 
-export const none = (cleanedInput: string, rawInput: string) => {
+export const none = (cleanedInput: string) => {
   const result = stringToDate(cleanedInput);
   if (!result.ok) return result;
   const date = result.value;
 
   return ok({
-    original: rawInput,
     modifier: 'NONE',
     start: {
       format: date.format,
@@ -23,13 +22,12 @@ export const none = (cleanedInput: string, rawInput: string) => {
   } as const);
 };
 
-export const before = (cleanedInput: string, rawInput: string) => {
+export const before = (cleanedInput: string) => {
   const result = stringToDate(cleanedInput.slice('before '.length));
   if (!result.ok) return result;
   const date = result.value;
 
   return ok({
-    original: rawInput,
     modifier: 'BEFORE',
     start: {
       format: date.format,
@@ -44,13 +42,12 @@ export const before = (cleanedInput: string, rawInput: string) => {
   } as const);
 };
 
-export const after = (cleanedInput: string, rawInput: string) => {
+export const after = (cleanedInput: string) => {
   const result = stringToDate(cleanedInput.slice('after '.length));
   if (!result.ok) return result;
   const date = result.value;
 
   return ok({
-    original: rawInput,
     modifier: 'AFTER',
     start: {
       format: date.format,
@@ -65,13 +62,12 @@ export const after = (cleanedInput: string, rawInput: string) => {
   } as const);
 };
 
-export const about = (cleanedInput: string, rawInput: string) => {
+export const about = (cleanedInput: string) => {
   const result = stringToDate(cleanedInput.slice('about '.length));
   if (!result.ok) return result;
   const date = result.value;
 
   return ok({
-    original: rawInput,
     modifier: 'ABOUT',
     start: {
       format: date.format,
@@ -86,7 +82,7 @@ export const about = (cleanedInput: string, rawInput: string) => {
   } as const);
 };
 
-export const between = (cleanedInput: string, rawInput: string) => {
+export const between = (cleanedInput: string) => {
   const dates = cleanedInput.slice('between '.length).split(' and ');
   if (dates.length !== 2) return err('Invalid "BETWEEN" modifier.' as const);
 
@@ -98,7 +94,6 @@ export const between = (cleanedInput: string, rawInput: string) => {
   const end = endDateResult.value;
 
   return ok({
-    original: rawInput,
     modifier: 'BETWEEN',
     start: {
       format: start.format,
@@ -109,7 +104,7 @@ export const between = (cleanedInput: string, rawInput: string) => {
   } as const);
 };
 
-export const from = (cleanedInput: string, rawInput: string) => {
+export const from = (cleanedInput: string) => {
   const dates = cleanedInput.slice('from '.length).split(' to ');
   if (dates.length !== 2) return err('Invalid "FROM" modifier.' as const);
 
@@ -121,7 +116,6 @@ export const from = (cleanedInput: string, rawInput: string) => {
   const end = endDateResult.value;
 
   return ok({
-    original: rawInput,
     modifier: 'FROM',
     start: {
       format: start.format,
@@ -132,14 +126,13 @@ export const from = (cleanedInput: string, rawInput: string) => {
   } as const);
 };
 
-export const early = (cleanedInput: string, rawInput: string) => {
+export const early = (cleanedInput: string) => {
   const result = stringToDate(cleanedInput.slice('early '.length));
   if (!result.ok) return result;
   const date = result.value;
   const { start, half } = getTimes(date);
 
   return ok({
-    original: rawInput,
     modifier: 'EARLY',
     start: {
       format: date.format,
@@ -154,7 +147,7 @@ export const early = (cleanedInput: string, rawInput: string) => {
   } as const);
 };
 
-export const mid = (cleanedInput: string, rawInput: string) => {
+export const mid = (cleanedInput: string) => {
   const result = stringToDate(cleanedInput.slice('mid '.length));
   if (!result.ok) return result;
   const date = result.value;
@@ -162,7 +155,6 @@ export const mid = (cleanedInput: string, rawInput: string) => {
   const { start, half } = getTimes(date);
 
   return ok({
-    original: rawInput,
     modifier: 'MID',
     start: {
       format: date.format,
@@ -177,14 +169,13 @@ export const mid = (cleanedInput: string, rawInput: string) => {
   } as const);
 };
 
-export const late = (cleanedInput: string, rawInput: string) => {
+export const late = (cleanedInput: string) => {
   const result = stringToDate(cleanedInput.slice('late '.length));
   if (!result.ok) return result;
   const date = result.value;
   const { start, half } = getTimes(date);
 
   return ok({
-    original: rawInput,
     modifier: 'LATE',
     start: {
       format: date.format,
