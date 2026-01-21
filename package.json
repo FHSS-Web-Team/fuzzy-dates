@@ -1,6 +1,6 @@
 {
   "name": "@fhss-web-team/fuzzy-dates",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Parses imprecise date strings into a structured form that can be normalized, indexed, searched, and ordered while preserving the original input.",
   "homepage": "https://github.com/FHSS-Web-Team/fuzzy-dates#readme",
   "bugs": {
