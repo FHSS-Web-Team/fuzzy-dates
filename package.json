@@ -2,13 +2,13 @@
   "name": "@fhss-web-team/fuzzy-dates",
   "version": "1.0.0",
   "description": "Parses imprecise date strings into a structured form that can be normalized, indexed, searched, and ordered while preserving the original input.",
-  "homepage": "https://github.com/FHSS-Web-Team/CFHG-fuzzy-dates#readme",
+  "homepage": "https://github.com/FHSS-Web-Team/fuzzy-dates#readme",
   "bugs": {
-    "url": "https://github.com/FHSS-Web-Team/CFHG-fuzzy-dates/issues"
+    "url": "https://github.com/FHSS-Web-Team/fuzzy-dates/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FHSS-Web-Team/CFHG-fuzzy-dates.git"
+    "url": "git+https://github.com/FHSS-Web-Team/fuzzy-dates.git"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
