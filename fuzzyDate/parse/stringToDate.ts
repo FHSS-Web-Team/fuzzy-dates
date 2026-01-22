@@ -1,4 +1,4 @@
-import { err } from '../types';
+import { err } from '../helpers/result';
 import {
   dayMonthDigitYear,
   dayMonthStringYear,

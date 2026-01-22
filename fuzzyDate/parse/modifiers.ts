@@ -1,5 +1,6 @@
 import { getTimes } from '.';
-import { ok, err, DATE_NEG_INFINITY, DATE_POS_INFINITY } from '../types';
+import { DATE_NEG_INFINITY, DATE_POS_INFINITY } from '../helpers/constants';
+import { err, ok } from '../helpers/result';
 import { stringToDate } from './stringToDate';
 
 export const none = (cleanedInput: string) => {

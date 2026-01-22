@@ -1,17 +1,12 @@
-import {
-  NormalFormat,
-  FuzzyDateModel,
-  SEASON_MONTH_MAP,
-  FuzzyDateModifier,
-  isSeasonMonth,
-} from '../types';
+import { isSeasonMonth, SEASON_MONTH_MAP } from '../helpers/maps';
+import { FuzzyDateFormat, FuzzyDateModel, FuzzyDate } from '../helpers/types';
 
 // Main function
 export function normalize(model: FuzzyDateModel) {
   const startDate = normalizeDate(model.start.minDate, model.start.format);
   const endDate = normalizeDate(model.end.minDate, model.end.format);
 
-  const normalModifierMap: Record<FuzzyDateModifier, string> = {
+  const normalModifierMap: Record<FuzzyDate, string> = {
     NONE: startDate,
     BEFORE: `before ${endDate}`,
     AFTER: `after ${startDate}`,
@@ -27,7 +22,7 @@ export function normalize(model: FuzzyDateModel) {
 }
 
 // Helpers
-function normalizeDate(date: Date, format: NormalFormat) {
+function normalizeDate(date: Date, format: FuzzyDateFormat) {
   const options: Intl.DateTimeFormatOptions = { timeZone: 'UTC' };
   switch (format) {
     case 'YYYY':

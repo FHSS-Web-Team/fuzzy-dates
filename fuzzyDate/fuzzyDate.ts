@@ -2,12 +2,10 @@ import { parse } from './parse/index';
 import { normalize } from './normalize/normalize';
 import { collate } from './collate/collate';
 import { toGedcomX } from './gedcomX/toGedcomX';
-import {
-  DATE_NEG_INFINITY,
-  DATE_POS_INFINITY,
-  FuzzyDateModel,
-  ok,
-} from './types';
+import { FuzzyDateJson, FuzzyDateModel } from './helpers/types';
+import { DATE_NEG_INFINITY, DATE_POS_INFINITY } from './helpers/constants';
+import { ok, err } from './helpers/result';
+import { fuzzyDateJsonSchema } from './helpers/schemas';
 
 /**
  * Represents an immutable, parsed fuzzy date suitable for genealogy and
@@ -77,7 +75,7 @@ export class FuzzyDate {
    * This representation is derived and may evolve as GEDCOM X mapping
    * rules are refined.
    */
-  get formal() {
+  get formal(): string {
     return toGedcomX(this._model);
   }
 
@@ -92,7 +90,7 @@ export class FuzzyDate {
    * - `"March 1890"`
    * - `"between 1 Jan 1900 and 31 Dec 1901"`
    */
-  get normalized() {
+  get normalized(): string {
     return normalize(this._model);
   }
 
@@ -123,7 +121,7 @@ export class FuzzyDate {
    * - Derived from the canonical model.
    * - Always interpreted as UTC.
    */
-  get lowerBound() {
+  get lowerBound(): Date | null {
     return this._model.start.minDate === DATE_NEG_INFINITY
       ? null
       : this._model.start.minDate;
@@ -156,7 +154,7 @@ export class FuzzyDate {
    * - Derived from the canonical model.
    * - Always interpreted as UTC.
    */
-  get upperBound() {
+  get upperBound(): Date | null {
     return this._model.start.maxDate === DATE_POS_INFINITY
       ? null
       : this._model.start.maxDate;
@@ -182,7 +180,7 @@ export class FuzzyDate {
    * - Not intended for round-tripping
    * - Derived entirely from the canonical model
    */
-  get collationKey() {
+  get collationKey(): string {
     return collate(this._model);
   }
 
@@ -192,17 +190,49 @@ export class FuzzyDate {
    * The returned object is suitable for long-term storage,
    * transport, and later reconstruction via {@link fromJSON}.
    */
-  toJSON() {
-    return this._model;
+  toJSON(): FuzzyDateJson {
+    return {
+      modifier: this._model.modifier,
+      start: {
+        format: this._model.start.format,
+        minDate: this._model.start.minDate.toISOString(),
+        maxDate: this._model.start.maxDate.toISOString(),
+      },
+      end: {
+        format: this._model.end.format,
+        minDate: this._model.end.minDate.toISOString(),
+        maxDate: this._model.end.maxDate.toISOString(),
+      },
+    };
   }
 
   /**
    * Reconstructs a `FuzzyDate` from a previously serialized canonical model.
    *
-   * @param json A trusted `FuzzyDateModel`, typically loaded from storage.
+   * @param data A trusted `FuzzyDateModel`, typically loaded from storage.
    */
-  static fromJSON(json: FuzzyDateModel) {
-    return new FuzzyDate(json);
+  static fromJSON(data: unknown) {
+    try {
+      const json = typeof data === 'string' ? JSON.parse(data) : data;
+      const safeJson = fuzzyDateJsonSchema.parse(json);
+      const model: FuzzyDateModel = {
+        modifier: safeJson.modifier,
+        start: {
+          format: safeJson.start.format,
+          minDate: new Date(safeJson.start.minDate),
+          maxDate: new Date(safeJson.start.maxDate),
+        },
+        end: {
+          format: safeJson.end.format,
+          minDate: new Date(safeJson.end.minDate),
+          maxDate: new Date(safeJson.end.maxDate),
+        },
+      };
+
+      return ok(new FuzzyDate(model));
+    } catch {
+      return err('Invalid JSON data.' as const);
+    }
   }
 
   /**

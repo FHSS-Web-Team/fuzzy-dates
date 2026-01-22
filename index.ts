@@ -1,2 +1,3 @@
 export { FuzzyDate } from './fuzzyDate/fuzzyDate';
-export { FuzzyDateModel } from './fuzzyDate/types'
+export { FuzzyDateJson } from './fuzzyDate/helpers/types';
+export { fuzzyDateJsonSchema } from './fuzzyDate/helpers/schemas';

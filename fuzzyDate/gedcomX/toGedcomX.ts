@@ -1,9 +1,9 @@
-import { FuzzyDateModel, FuzzyDateModifier, FuzzyDateValue } from '../types';
+import { FuzzyDateModel, FuzzyDate, FuzzyDateValue } from '../helpers/types';
 
 export function toGedcomX(model: FuzzyDateModel) {
   const startDate = toSimpleDate(model.start);
   const endDate = toSimpleDate(model.end);
-  const gedcomModifierMap: Record<FuzzyDateModifier, string> = {
+  const gedcomModifierMap: Record<FuzzyDate, string> = {
     NONE: startDate,
     BEFORE: `/${endDate}`,
     AFTER: `${startDate}/`,

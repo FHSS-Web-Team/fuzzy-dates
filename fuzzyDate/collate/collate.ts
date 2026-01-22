@@ -1,4 +1,5 @@
-import { FORMAT_ORDER, FuzzyDateModel, MODIFIER_ORDER } from '../types';
+import { FORMAT_ORDER, MODIFIER_ORDER } from '../helpers/constants';
+import { FuzzyDateModel } from '../helpers/types';
 
 export function collate(model: FuzzyDateModel): string {
   const date1 = model.start.minDate.toISOString();

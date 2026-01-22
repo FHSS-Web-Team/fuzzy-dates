@@ -1,5 +1,6 @@
 import { calculateMaxDate, parseDateGroups } from '.';
-import { ok, isSeason } from '../types';
+import { isSeason } from '../helpers/maps';
+import { ok } from '../helpers/result';
 
 const DAY = '(?<day>\\d{1,2})';
 const MONTH_DIGIT = '(?<month>\\d{1,2})';

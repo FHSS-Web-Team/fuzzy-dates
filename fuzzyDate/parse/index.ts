@@ -9,16 +9,14 @@ import {
   mid,
   none,
 } from './modifiers';
+import { FuzzyDateFormat, FuzzyDateValue } from '../helpers/types';
+import { err, ok } from '../helpers/result';
 import {
-  ok,
-  err,
-  NormalFormat,
-  FuzzyDateValue,
-  MONTH_NAME_MAP,
-  MONTH_SEASON_MAP,
   isMonth,
   isSeason,
-} from '../types';
+  MONTH_NAME_MAP,
+  MONTH_SEASON_MAP,
+} from '../helpers/maps';
 
 // Main Parse Function
 export function parse(input: string) {
@@ -48,7 +46,7 @@ export function getTimes(date: FuzzyDateValue) {
   return { start, end, half };
 }
 
-export function calculateMaxDate(start: Date, format: NormalFormat) {
+export function calculateMaxDate(start: Date, format: FuzzyDateFormat) {
   const endDate = new Date(start);
 
   if (format === 'MMMM_YYYY') {
