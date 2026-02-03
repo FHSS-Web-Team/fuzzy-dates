@@ -1,3 +1,3 @@
 export { FuzzyDate } from './fuzzyDate/fuzzyDate.js';
-export { FuzzyDateJson } from './fuzzyDate/helpers/types';
-export { fuzzyDateJsonSchema } from './fuzzyDate/helpers/schemas';
+export { FuzzyDateJson } from './fuzzyDate/helpers/types.js';
+export { fuzzyDateJsonSchema } from './fuzzyDate/helpers/schemas.js';
