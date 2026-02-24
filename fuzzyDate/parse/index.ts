@@ -35,6 +35,7 @@ export function parse(input: string) {
   // notice that the above modifers all use two dates (start and end)
   // below they are closer to how we handle seasons.
   if (cleanedInput.startsWith('about ')) return about(cleanedInput);
+  // family search does +-2 (probably precision) for about
   if (cleanedInput.startsWith('early ')) return early(cleanedInput);
   if (cleanedInput.startsWith('mid ')) return mid(cleanedInput);
   if (cleanedInput.startsWith('late ')) return late(cleanedInput);
