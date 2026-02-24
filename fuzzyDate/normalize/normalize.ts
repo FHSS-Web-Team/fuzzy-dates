@@ -1,55 +1,57 @@
-import { isSeasonMonth, SEASON_MONTH_MAP } from '../helpers/maps';
-import {
-  FuzzyDateFormat,
-  FuzzyDateModel,
-  FuzzyDateModifier,
-} from '../helpers/types';
+import { isSeasonMonth, SEASON_MONTH_MAP } from '../parse/simpleDate/maps';
+import { FuzzyDateModel, isRange, SimpleDate } from '../helpers/types';
 
-// Main function
 export function normalize(model: FuzzyDateModel) {
-  const startDate = normalizeDate(model.start.min, model.start.format);
-  const endDate = normalizeDate(model.end.min, model.end.format);
+  const startDate = normalizeSimple(model.start);
+  const endDate = normalizeSimple(model.end);
 
-  const normalModifierMap: Record<FuzzyDateModifier, string> = {
-    NONE: startDate,
-    BEFORE: `before ${endDate}`,
-    AFTER: `after ${startDate}`,
-    FROM: `from ${startDate} to ${endDate}`,
-    BETWEEN: `between ${startDate} and ${endDate}`,
-    ABOUT: `about ${startDate}`,
-  };
+  if (isRange(model)) {
+    if (startDate === null) {
+      return `${model.approximate ? 'approximately ' : ''}before ${endDate}`;
+    }
 
-  return normalModifierMap[model.modifier];
+    if (endDate === null) {
+      return `${model.approximate ? 'approximately ' : ''}after ${startDate}`;
+    }
+
+    if (model.approximate) {
+      return `between ${startDate} and ${endDate}`;
+    } else {
+      return `from ${startDate} to ${endDate}`;
+    }
+  } else {
+    return `${model.approximate ? 'about ' : ''}${startDate}`;
+  }
 }
 
-// Helpers
-function normalizeDate(date: Date, format: FuzzyDateFormat) {
+function normalizeSimple(input: SimpleDate | null) {
+  if (input === null) return null;
+
+  const precision = input.precision;
+  const date = input.min;
+
   const options: Intl.DateTimeFormatOptions = { timeZone: 'UTC' };
-  switch (format) {
-    case 'YYYY':
+  switch (precision) {
+    case 'Year':
       options.year = 'numeric';
       break;
 
-    case 'MMMM_YYYY':
+    case 'Season': {
+      const month = date.getUTCMonth() + 1;
+      if (!isSeasonMonth(month)) return '';
+      return `${SEASON_MONTH_MAP[month]} ${date.getUTCFullYear()}`;
+    }
+
+    case 'Month':
       options.month = 'long';
       options.year = 'numeric';
       break;
 
-    case 'D_MMMM_YYYY':
+    case 'Day':
       options.day = 'numeric';
       options.month = 'long';
       options.year = 'numeric';
       break;
-
-    case 'SEASON_YYYY': {
-      const month = date.getUTCMonth() + 1;
-      if (!isSeasonMonth(month)) return ''; // month always returns 1 - 12 so this should never happen
-      return `${SEASON_MONTH_MAP[month]} ${date.getUTCFullYear()}`;
-    }
-    case 'YYYYs': {
-      const year = date.getUTCFullYear();
-      return `${year}s`;
-    }
   }
 
   return date.toLocaleDateString('en-GB', options);

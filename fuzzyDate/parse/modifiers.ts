@@ -1,44 +1,41 @@
 import { err, ok } from '../helpers/result';
-import { parseSimpleDate } from './stringToDate';
+import { parseSimpleDate } from './simpleDate/parse';
 
-export function none(input: string, approximate: boolean) {
-  const result = parseSimpleDate(input);
+export function none(rawInput: string) {
+  const result = parseSimpleDate(rawInput);
   if (!result.ok) return result;
   const date = result.value;
 
   return ok({
-    type: 'simple',
-    approximate,
-    date,
+    start: date,
+    end: date,
   } as const);
 }
 
-export function before(input: string, approximate: boolean) {
+export function before(rawInput: string) {
+  const input = rawInput.slice('before '.length);
   const result = parseSimpleDate(input);
   if (!result.ok) return result;
 
   return ok({
-    type: 'range',
-    approximate,
     start: null,
     end: result.value,
   } as const);
 }
 
-export function after(input: string, approximate: boolean) {
+export function after(rawInput: string) {
+  const input = rawInput.slice('after '.length);
   const result = parseSimpleDate(input);
   if (!result.ok) return result;
 
   return ok({
-    type: 'range',
-    approximate,
     start: result.value,
     end: null,
   } as const);
 }
 
-export function between(input: string) {
-  const dates = input.slice('between '.length).split(' and ');
+export function between(rawInput: string) {
+  const dates = rawInput.slice('between '.length).split(' and ');
   if (dates.length !== 2) return err('Invalid "BETWEEN" modifier.' as const);
 
   const startResult = parseSimpleDate(dates[0]);
@@ -48,15 +45,13 @@ export function between(input: string) {
   if (!endResult.ok) return endResult;
 
   return ok({
-    type: 'range',
-    approximate: true,
     start: startResult.value,
     end: endResult.value,
   } as const);
 }
 
-export function from(input: string, approximate: boolean) {
-  const dates = input.slice('from '.length).split(' to ');
+export function from(rawInput: string) {
+  const dates = rawInput.slice('from '.length).split(' to ');
   if (dates.length !== 2) return err('Invalid "FROM" modifier.' as const);
 
   const startResult = parseSimpleDate(dates[0]);
@@ -66,8 +61,6 @@ export function from(input: string, approximate: boolean) {
   if (!endResult.ok) return endResult;
 
   return ok({
-    type: 'range',
-    approximate,
     start: startResult.value,
     end: endResult.value,
   } as const);

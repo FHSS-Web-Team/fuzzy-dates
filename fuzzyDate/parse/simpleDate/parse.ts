@@ -1,4 +1,4 @@
-import { err } from '../helpers/result';
+import { err } from '../../helpers/result';
 import {
   dayMonthDigitYear,
   dayMonthStringYear,
@@ -11,7 +11,7 @@ import {
   yearMonthDigit,
   yearMonthString,
   yearMonthStringDay,
-} from './inputDateFormats';
+} from './formats';
 
 export function parseSimpleDate(input: string) {
   const parsers = [

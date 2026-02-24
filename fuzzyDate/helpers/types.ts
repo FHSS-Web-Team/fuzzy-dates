@@ -1,27 +1,14 @@
-export type FuzzyDateModel =
-  | {
-      type: 'simple';
-      approximate: boolean;
-      date: SimpleDate;
-    }
-  | {
-      type: 'range';
-      approximate: boolean;
-      start: SimpleDate;
-      end: SimpleDate;
-    }
-  | {
-      type: 'range';
-      approximate: boolean;
-      start: null;
-      end: SimpleDate;
-    }
-  | {
-      type: 'range';
-      approximate: boolean;
-      start: SimpleDate;
-      end: null;
-    };
+export type SimpleDate = {
+  precision: Precision;
+  min: Date;
+  max: Date;
+};
+
+export type FuzzyDateModel = {
+  approximate: boolean;
+  start: SimpleDate | null;
+  end: SimpleDate | null;
+};
 
 export type Precision =
   | 'Year'
@@ -32,8 +19,8 @@ export type Precision =
   | 'Minute'
   | 'Second';
 
-export type SimpleDate = {
-  precision: Precision;
-  min: Date;
-  max: Date;
-};
+export function isRange(model: FuzzyDateModel) {
+  return (
+    model.start?.min !== model.end?.min || model.start?.max !== model.end?.max
+  );
+}

@@ -1,8 +1,9 @@
 import { parse } from './parse/index';
 import { normalize } from './normalize/normalize';
 import { toGedcomX } from './gedcomX/toGedcomX';
-import { FuzzyDateModel } from './helpers/types';
-import { ok } from './helpers/result';
+import { FuzzyDateModel, isRange } from './helpers/types';
+import { err, ok, Result } from './helpers/result';
+import { DATE_NEG_INFINITY, DATE_POS_INFINITY } from './helpers/constants';
 
 /**
  * Represents an immutable, parsed fuzzy date suitable for genealogy and
@@ -118,10 +119,8 @@ export class FuzzyDate {
    * - Derived from the canonical model.
    * - Always interpreted as UTC.
    */
-  get earliest(): Date | null {
-    return this._model.type === 'simple'
-      ? this._model.date.min
-      : (this._model.start?.min ?? null);
+  get earliest(): Date {
+    return this._model.start?.min ?? DATE_NEG_INFINITY;
   }
 
   /**
@@ -151,10 +150,38 @@ export class FuzzyDate {
    * - Derived from the canonical model.
    * - Always interpreted as UTC.
    */
-  get latest(): Date | null {
-    return this._model.type === 'simple'
-      ? this._model.date.max
-      : (this._model.end?.max ?? null);
+  get latest(): Date {
+    return this._model.end?.max ?? DATE_POS_INFINITY;
+  }
+
+  get sortKeys(): Result<[Date, Date], 'Invalid sort keys'> {
+    if (isRange(this._model)) {
+      // left open
+      if (this._model.start === null && this._model.end !== null) {
+        return ok([this._model.end.min, DATE_POS_INFINITY]);
+      }
+
+      // right open
+      if (this._model.end === null && this._model.start !== null) {
+        return ok([this._model.start.max, DATE_POS_INFINITY]);
+      }
+
+      // closed
+      if (this._model.start !== null && this._model.end !== null) {
+        return ok([this._model.start.min, this._model.end.max]);
+      }
+    } else {
+      // simple
+      if (this._model.start !== null && this._model.end !== null) {
+        return ok([this._model.start.min, this._model.end.max]);
+      }
+    }
+
+    return err('Invalid sort keys');
+  }
+
+  get approximate(): boolean {
+    return this._model.approximate;
   }
 
   /**
