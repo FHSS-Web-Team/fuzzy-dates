@@ -1,11 +1,8 @@
 import { parse } from './parse/index';
 import { normalize } from './normalize/normalize';
-import { collate } from './collate/collate';
 import { toGedcomX } from './gedcomX/toGedcomX';
-import { FuzzyDateJson, FuzzyDateModel } from './helpers/types';
-import { DATE_NEG_INFINITY, DATE_POS_INFINITY } from './helpers/constants';
-import { ok, err } from './helpers/result';
-import { fuzzyDateJsonSchema } from './helpers/schemas';
+import { FuzzyDateModel } from './helpers/types';
+import { ok } from './helpers/result';
 
 /**
  * Represents an immutable, parsed fuzzy date suitable for genealogy and
@@ -122,9 +119,9 @@ export class FuzzyDate {
    * - Always interpreted as UTC.
    */
   get earliest(): Date | null {
-    return this._model.start.min === DATE_NEG_INFINITY
-      ? null
-      : this._model.start.min;
+    return this._model.type === 'simple'
+      ? this._model.date.min
+      : (this._model.start?.min ?? null);
   }
 
   /**
@@ -155,84 +152,9 @@ export class FuzzyDate {
    * - Always interpreted as UTC.
    */
   get latest(): Date | null {
-    return this._model.end.max === DATE_POS_INFINITY
-      ? null
-      : this._model.end.max;
-  }
-
-  /**
-   * Collation key used for chronological ordering.
-   *
-   * The collation key is a derived string whose lexicographic ordering
-   * is guaranteed to match the semantic chronological ordering of fuzzy dates.
-   *
-   * ```text
-   * a occurs before b  ⇔  a.collationKey < b.collationKey
-   * ```
-   *
-   * This property is intended for:
-   * - database indexing
-   * - `ORDER BY` clauses
-   * - stable sorting without parsing
-   *
-   * @remarks
-   * - Not human-readable
-   * - Not intended for round-tripping
-   * - Derived entirely from the canonical model
-   */
-  get collationKey(): string {
-    return collate(this._model);
-  }
-
-  /**
-   * Serializes this fuzzy date to its canonical JSON representation.
-   *
-   * The returned object is suitable for long-term storage,
-   * transport, and later reconstruction via {@link fromJSON}.
-   */
-  toJSON(): FuzzyDateJson {
-    return {
-      modifier: this._model.modifier,
-      start: {
-        format: this._model.start.format,
-        min: this._model.start.min.toISOString(),
-        max: this._model.start.max.toISOString(),
-      },
-      end: {
-        format: this._model.end.format,
-        min: this._model.end.min.toISOString(),
-        max: this._model.end.max.toISOString(),
-      },
-    };
-  }
-
-  /**
-   * Reconstructs a `FuzzyDate` from a previously serialized canonical model.
-   *
-   * @param data A trusted `FuzzyDateModel`, typically loaded from storage.
-   */
-  static fromJSON(data: unknown) {
-    try {
-      const json = typeof data === 'string' ? JSON.parse(data) : data;
-      const safeJson = fuzzyDateJsonSchema.parse(json);
-      const model: FuzzyDateModel = {
-        modifier: safeJson.modifier,
-        start: {
-          format: safeJson.start.format,
-          min: new Date(safeJson.start.min),
-          max: new Date(safeJson.start.max),
-        },
-        end: {
-          format: safeJson.end.format,
-          min: new Date(safeJson.end.min),
-          max: new Date(safeJson.end.max),
-        },
-      };
-
-      return ok(new FuzzyDate(model));
-    } catch {
-      return err('Invalid JSON data.' as const);
-    }
+    return this._model.type === 'simple'
+      ? this._model.date.max
+      : (this._model.end?.max ?? null);
   }
 
   /**

@@ -2,7 +2,6 @@ import { err } from '../helpers/result';
 import {
   dayMonthDigitYear,
   dayMonthStringYear,
-  decade,
   monthDigitYear,
   monthStringDayYear,
   monthStringYear,
@@ -14,7 +13,7 @@ import {
   yearMonthStringDay,
 } from './inputDateFormats';
 
-export function stringToSimpleDate(dateInput: string) {
+export function parseSimpleDate(input: string) {
   const parsers = [
     year,
     monthStringYear,
@@ -27,11 +26,10 @@ export function stringToSimpleDate(dateInput: string) {
     yearMonthDigit,
     dayMonthDigitYear,
     yearMonthDigitDay,
-    decade,
   ];
 
   for (const parseFormat of parsers) {
-    const result = parseFormat(dateInput);
+    const result = parseFormat(input);
     if (result) return result;
   }
 

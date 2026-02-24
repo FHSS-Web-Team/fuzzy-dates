@@ -1,5 +1,5 @@
-import { about, after, before, between, from, none } from './modifiers';
-import { FuzzyDateFormat, SimpleDate } from '../helpers/types';
+import { after, before, between, from, none } from './modifiers';
+import { Precision, SimpleDate } from '../helpers/types';
 import { err, ok } from '../helpers/result';
 import {
   isMonth,
@@ -17,16 +17,23 @@ export function parse(input: string) {
     .replace(/\s+/g, ' ') // collapses multiple spaces to a single space
     .trim(); // Removes trailing and leading spaces
 
-  if (cleanedInput.startsWith('before ')) return before(cleanedInput);
-  if (cleanedInput.startsWith('after ')) return after(cleanedInput);
-  if (cleanedInput.startsWith('between ')) return between(cleanedInput);
-  if (cleanedInput.startsWith('from ')) return from(cleanedInput);
-  // FIXME: should these be formats so that they can be combined with other modifiers?
-  // notice that the above modifers all use two dates (start and end)
-  // below they are closer to how we handle seasons.
-  if (cleanedInput.startsWith('about ')) return about(cleanedInput);
-  // family search does +-2 (probably precision) for about
-  return none(cleanedInput);
+  const approximate =
+    cleanedInput.startsWith('about ') ||
+    cleanedInput.startsWith('approximately ') ||
+    cleanedInput.startsWith('around ');
+
+  const removeApproximate = cleanedInput.slice(0, cleanedInput.indexOf(' '));
+
+  if (removeApproximate.startsWith('before '))
+    return before(removeApproximate, approximate);
+  if (removeApproximate.startsWith('after '))
+    return after(removeApproximate, approximate);
+  if (removeApproximate.startsWith('between '))
+    return between(removeApproximate);
+  if (removeApproximate.startsWith('from '))
+    return from(removeApproximate, approximate);
+
+  return none(removeApproximate, approximate);
 }
 
 // Helpers
@@ -37,30 +44,26 @@ export function getTimes(date: SimpleDate) {
   return { start, end, half };
 }
 
-export function calculateMaxDate(start: Date, format: FuzzyDateFormat) {
+export function calculateMaxDate(start: Date, precision: Precision) {
   const endDate = new Date(start);
 
-  if (format === 'MMMM_YYYY') {
-    endDate.setUTCMonth(endDate.getUTCMonth() + 1);
-    endDate.setMilliseconds(-1);
-  }
-  if (format === 'SEASON_YYYY') {
-    endDate.setUTCMonth(endDate.getUTCMonth() + 3);
-    endDate.setMilliseconds(-1);
-  }
-  if (format === 'YYYY') {
+  if (precision === 'Year') {
     endDate.setUTCFullYear(endDate.getUTCFullYear() + 1);
-    endDate.setUTCMilliseconds(-1);
-  }
-  if (format === 'YYYYs') {
-    endDate.setUTCFullYear(endDate.getUTCFullYear() + 10);
-    endDate.setUTCMilliseconds(-1);
-  }
-  if (format === 'D_MMMM_YYYY') {
+  } else if (precision === 'Season') {
+    endDate.setUTCMonth(endDate.getUTCMonth() + 3);
+  } else if (precision === 'Month') {
+    endDate.setUTCMonth(endDate.getUTCMonth() + 1);
+  } else if (precision === 'Day') {
     endDate.setUTCDate(endDate.getUTCDate() + 1);
-    endDate.setUTCMilliseconds(-1);
+  } else if (precision === 'Hour') {
+    endDate.setUTCHours(endDate.getUTCHours() + 1);
+  } else if (precision === 'Minute') {
+    endDate.setUTCMinutes(endDate.getUTCMinutes() + 1);
+  } else {
+    endDate.setUTCSeconds(endDate.getUTCSeconds() + 1);
   }
 
+  endDate.setUTCMilliseconds(-1);
   return endDate;
 }
 
@@ -68,12 +71,9 @@ export function parseDateGroups(groups: {
   day?: string;
   month?: string;
   year?: string;
-  decade?: string;
 }) {
-  if (!groups.year && !groups.decade) return err('Year is required.' as const);
-  const year = groups.decade
-    ? Number(groups.decade.replace(/(\d+)s$/, '$1')) // 'YYYYs' -> 'YYYY'
-    : Number(groups.year);
+  if (!groups.year) return err('Year is required.' as const);
+  const year = parseInt(groups.year);
 
   let month = 0; //default to January
   if (groups.month) {

@@ -6,7 +6,6 @@ const DAY = '(?<day>\\d{1,2})';
 const MONTH_DIGIT = '(?<month>\\d{1,2})';
 const MONTH_STRING = '(?<month>[a-z]+)';
 const YEAR = '(?<year>\\d{4})';
-const DECADE = '(?<decade>\\d{4}s)';
 
 // YYYY
 export const year = (rawDate: string) => {
@@ -17,14 +16,14 @@ export const year = (rawDate: string) => {
   const result = parseDateGroups(match.groups);
   if (!result.ok) return result;
 
-  const format = 'YYYY';
+  const precision = 'Year';
   const min = result.value.date;
-  const max = calculateMaxDate(min, format);
+  const max = calculateMaxDate(min, precision);
 
   return ok({
-    format: format,
-    min: min,
-    max: max,
+    precision,
+    min,
+    max,
   } as const);
 };
 
@@ -38,14 +37,14 @@ export const monthStringYear = (rawDate: string) => {
   if (!result.ok) return result;
 
   const monthString = match.groups['month'].toLowerCase();
-  const format = isSeason(monthString) ? 'SEASON_YYYY' : 'MMMM_YYYY';
+  const precision = isSeason(monthString) ? 'Season' : 'Month';
   const min = result.value.date;
-  const max = calculateMaxDate(min, format);
+  const max = calculateMaxDate(min, precision);
 
   return ok({
-    format: format,
-    min: min,
-    max: max,
+    precision,
+    min,
+    max,
   } as const);
 };
 
@@ -59,14 +58,14 @@ export const yearMonthString = (rawDate: string) => {
   if (!result.ok) return result;
 
   const monthString = match.groups['month'].toLowerCase();
-  const format = isSeason(monthString) ? 'SEASON_YYYY' : 'MMMM_YYYY';
+  const precision = isSeason(monthString) ? 'Season' : 'Month';
   const min = result.value.date;
-  const max = calculateMaxDate(min, format);
+  const max = calculateMaxDate(min, precision);
 
   return ok({
-    format: format,
-    min: min,
-    max: max,
+    precision,
+    min,
+    max,
   } as const);
 };
 
@@ -79,14 +78,14 @@ export const dayMonthStringYear = (rawDate: string) => {
   const result = parseDateGroups(match.groups);
   if (!result.ok) return result;
 
-  const format = 'D_MMMM_YYYY';
+  const precision = 'Day';
   const min = result.value.date;
-  const max = calculateMaxDate(min, format);
+  const max = calculateMaxDate(min, precision);
 
   return ok({
-    format: format,
-    min: min,
-    max: max,
+    precision,
+    min,
+    max,
   } as const);
 };
 
@@ -99,14 +98,14 @@ export const monthStringDayYear = (rawDate: string) => {
   const result = parseDateGroups(match.groups);
   if (!result.ok) return result;
 
-  const format = 'D_MMMM_YYYY';
+  const precision = 'Day';
   const min = result.value.date;
-  const max = calculateMaxDate(min, format);
+  const max = calculateMaxDate(min, precision);
 
   return ok({
-    format: format,
-    min: min,
-    max: max,
+    precision,
+    min,
+    max,
   } as const);
 };
 
@@ -119,14 +118,14 @@ export const yearMonthStringDay = (rawDate: string) => {
   const result = parseDateGroups(match.groups);
   if (!result.ok) return result;
 
-  const format = 'D_MMMM_YYYY';
+  const precision = 'Day';
   const min = result.value.date;
-  const max = calculateMaxDate(min, format);
+  const max = calculateMaxDate(min, precision);
 
   return ok({
-    format: format,
-    min: min,
-    max: max,
+    precision,
+    min,
+    max,
   } as const);
 };
 
@@ -139,14 +138,14 @@ export const yearDayMonthString = (rawDate: string) => {
   const result = parseDateGroups(match.groups);
   if (!result.ok) return result;
 
-  const format = 'D_MMMM_YYYY';
+  const precision = 'Day';
   const min = result.value.date;
-  const max = calculateMaxDate(min, format);
+  const max = calculateMaxDate(min, precision);
 
   return ok({
-    format: format,
-    min: min,
-    max: max,
+    precision,
+    min,
+    max,
   } as const);
 };
 
@@ -159,14 +158,14 @@ export const monthDigitYear = (rawDate: string) => {
   const result = parseDateGroups(match.groups);
   if (!result.ok) return result;
 
-  const format = 'MMMM_YYYY';
+  const precision = 'Month';
   const min = result.value.date;
-  const max = calculateMaxDate(min, format);
+  const max = calculateMaxDate(min, precision);
 
   return ok({
-    format: format,
-    min: min,
-    max: max,
+    precision,
+    min,
+    max,
   } as const);
 };
 
@@ -179,14 +178,14 @@ export const yearMonthDigit = (rawDate: string) => {
   const result = parseDateGroups(match.groups);
   if (!result.ok) return result;
 
-  const format = 'MMMM_YYYY';
+  const precision = 'Month';
   const min = result.value.date;
-  const max = calculateMaxDate(min, format);
+  const max = calculateMaxDate(min, precision);
 
   return ok({
-    format: format,
-    min: min,
-    max: max,
+    precision,
+    min,
+    max,
   } as const);
 };
 
@@ -199,14 +198,14 @@ export const dayMonthDigitYear = (rawDate: string) => {
   const result = parseDateGroups(match.groups);
   if (!result.ok) return result;
 
-  const format = 'D_MMMM_YYYY';
+  const precision = 'Day';
   const min = result.value.date;
-  const max = calculateMaxDate(min, format);
+  const max = calculateMaxDate(min, precision);
 
   return ok({
-    format: format,
-    min: min,
-    max: max,
+    precision,
+    min,
+    max,
   } as const);
 };
 
@@ -218,33 +217,13 @@ export const yearMonthDigitDay = (rawDate: string) => {
   const result = parseDateGroups(match.groups);
   if (!result.ok) return result;
 
-  const format = 'D_MMMM_YYYY';
+  const precision = 'Day';
   const min = result.value.date;
-  const max = calculateMaxDate(min, format);
+  const max = calculateMaxDate(min, precision);
 
   return ok({
-    format: format,
-    min: min,
-    max: max,
-  } as const);
-};
-
-// YYYYs
-export const decade = (rawDate: string) => {
-  const pattern = new RegExp(String.raw`^${DECADE}$`);
-  const match = pattern.exec(rawDate);
-  if (!match?.groups) return null;
-
-  const result = parseDateGroups(match.groups);
-  if (!result.ok) return result;
-
-  const format = 'YYYYs';
-  const min = result.value.date;
-  const max = calculateMaxDate(min, format);
-
-  return ok({
-    format: format,
-    min: min,
-    max: max,
+    precision,
+    min,
+    max,
   } as const);
 };

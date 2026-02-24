@@ -1,26 +1,7 @@
-export const DATE_NEG_INFINITY = new Date(-8640000000000000);
-export const DATE_POS_INFINITY = new Date(8640000000000000);
-
-export const FORMAT_ORDER = [
-  'YYYYs',
-  'YYYY',
-  'SEASON_YYYY',
-  'MMMM_YYYY',
-  'D_MMMM_YYYY',
-] as const;
-
 // FIXME: change this to precision instead of format
 // Centrury?, Decade?, Year, Season, Month, Day, Hour, Minute, Second
 
 // General rule approximate is before exact counterpart?
-export const MODIFIER_ORDER = [
-  'BEFORE',
-  'ABOUT',
-  'NONE',
-  'BETWEEN',
-  'FROM',
-  'AFTER',
-] as const;
 
 // FIXME: Does it make more sense to have no ordering here (use a datetime instead of string to sort)
 // and use gedcom x language or simple, range (open and closed), approximate simple, approximate range
@@ -33,7 +14,7 @@ export const MODIFIER_ORDER = [
 // this generally puts earlier dates first and then sorts broader ranges first
 // this would be simple enough to make an index for these two columns given we denormalize earliest and latest
 // to handle the approximate flag maybe we sort approximate desc after earliest
-// earliest ASC - approximate DESC - latest DESC
+// earliest ASC - approximate ASC - latest DESC
 // maybe still use a collationKey to make this easier to remember when time to sort
 
 // When we handle after we need to choose the start.max for the earliest value

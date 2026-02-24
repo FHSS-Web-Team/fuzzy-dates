@@ -1,21 +1,39 @@
-import z from 'zod';
-import { FORMAT_ORDER, MODIFIER_ORDER } from './constants';
-import { fuzzyDateJsonSchema } from './schemas';
+export type FuzzyDateModel =
+  | {
+      type: 'simple';
+      approximate: boolean;
+      date: SimpleDate;
+    }
+  | {
+      type: 'range';
+      approximate: boolean;
+      start: SimpleDate;
+      end: SimpleDate;
+    }
+  | {
+      type: 'range';
+      approximate: boolean;
+      start: null;
+      end: SimpleDate;
+    }
+  | {
+      type: 'range';
+      approximate: boolean;
+      start: SimpleDate;
+      end: null;
+    };
 
-export type FuzzyDateFormat = (typeof FORMAT_ORDER)[number];
-
-export type FuzzyDateModifier = (typeof MODIFIER_ORDER)[number];
+export type Precision =
+  | 'Year'
+  | 'Season'
+  | 'Month'
+  | 'Day'
+  | 'Hour'
+  | 'Minute'
+  | 'Second';
 
 export type SimpleDate = {
-  format: FuzzyDateFormat;
+  precision: Precision;
   min: Date;
   max: Date;
 };
-
-export type FuzzyDateModel = {
-  modifier: FuzzyDateModifier;
-  start: SimpleDate;
-  end: SimpleDate;
-};
-
-export type FuzzyDateJson = z.infer<typeof fuzzyDateJsonSchema>;
