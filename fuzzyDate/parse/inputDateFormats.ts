@@ -18,13 +18,13 @@ export const year = (rawDate: string) => {
   if (!result.ok) return result;
 
   const format = 'YYYY';
-  const minDate = result.value.date;
-  const maxDate = calculateMaxDate(minDate, format);
+  const min = result.value.date;
+  const max = calculateMaxDate(min, format);
 
   return ok({
     format: format,
-    minDate: minDate,
-    maxDate: maxDate,
+    min: min,
+    max: max,
   } as const);
 };
 
@@ -39,13 +39,13 @@ export const monthStringYear = (rawDate: string) => {
 
   const monthString = match.groups['month'].toLowerCase();
   const format = isSeason(monthString) ? 'SEASON_YYYY' : 'MMMM_YYYY';
-  const minDate = result.value.date;
-  const maxDate = calculateMaxDate(minDate, format);
+  const min = result.value.date;
+  const max = calculateMaxDate(min, format);
 
   return ok({
     format: format,
-    minDate: minDate,
-    maxDate: maxDate,
+    min: min,
+    max: max,
   } as const);
 };
 
@@ -60,13 +60,13 @@ export const yearMonthString = (rawDate: string) => {
 
   const monthString = match.groups['month'].toLowerCase();
   const format = isSeason(monthString) ? 'SEASON_YYYY' : 'MMMM_YYYY';
-  const minDate = result.value.date;
-  const maxDate = calculateMaxDate(minDate, format);
+  const min = result.value.date;
+  const max = calculateMaxDate(min, format);
 
   return ok({
     format: format,
-    minDate: minDate,
-    maxDate: maxDate,
+    min: min,
+    max: max,
   } as const);
 };
 
@@ -80,13 +80,13 @@ export const dayMonthStringYear = (rawDate: string) => {
   if (!result.ok) return result;
 
   const format = 'D_MMMM_YYYY';
-  const minDate = result.value.date;
-  const maxDate = calculateMaxDate(minDate, format);
+  const min = result.value.date;
+  const max = calculateMaxDate(min, format);
 
   return ok({
     format: format,
-    minDate: minDate,
-    maxDate: maxDate,
+    min: min,
+    max: max,
   } as const);
 };
 
@@ -100,13 +100,13 @@ export const monthStringDayYear = (rawDate: string) => {
   if (!result.ok) return result;
 
   const format = 'D_MMMM_YYYY';
-  const minDate = result.value.date;
-  const maxDate = calculateMaxDate(minDate, format);
+  const min = result.value.date;
+  const max = calculateMaxDate(min, format);
 
   return ok({
     format: format,
-    minDate: minDate,
-    maxDate: maxDate,
+    min: min,
+    max: max,
   } as const);
 };
 
@@ -120,13 +120,13 @@ export const yearMonthStringDay = (rawDate: string) => {
   if (!result.ok) return result;
 
   const format = 'D_MMMM_YYYY';
-  const minDate = result.value.date;
-  const maxDate = calculateMaxDate(minDate, format);
+  const min = result.value.date;
+  const max = calculateMaxDate(min, format);
 
   return ok({
     format: format,
-    minDate: minDate,
-    maxDate: maxDate,
+    min: min,
+    max: max,
   } as const);
 };
 
@@ -140,13 +140,13 @@ export const yearDayMonthString = (rawDate: string) => {
   if (!result.ok) return result;
 
   const format = 'D_MMMM_YYYY';
-  const minDate = result.value.date;
-  const maxDate = calculateMaxDate(minDate, format);
+  const min = result.value.date;
+  const max = calculateMaxDate(min, format);
 
   return ok({
     format: format,
-    minDate: minDate,
-    maxDate: maxDate,
+    min: min,
+    max: max,
   } as const);
 };
 
@@ -160,13 +160,13 @@ export const monthDigitYear = (rawDate: string) => {
   if (!result.ok) return result;
 
   const format = 'MMMM_YYYY';
-  const minDate = result.value.date;
-  const maxDate = calculateMaxDate(minDate, format);
+  const min = result.value.date;
+  const max = calculateMaxDate(min, format);
 
   return ok({
     format: format,
-    minDate: minDate,
-    maxDate: maxDate,
+    min: min,
+    max: max,
   } as const);
 };
 
@@ -180,13 +180,13 @@ export const yearMonthDigit = (rawDate: string) => {
   if (!result.ok) return result;
 
   const format = 'MMMM_YYYY';
-  const minDate = result.value.date;
-  const maxDate = calculateMaxDate(minDate, format);
+  const min = result.value.date;
+  const max = calculateMaxDate(min, format);
 
   return ok({
     format: format,
-    minDate: minDate,
-    maxDate: maxDate,
+    min: min,
+    max: max,
   } as const);
 };
 
@@ -200,13 +200,13 @@ export const dayMonthDigitYear = (rawDate: string) => {
   if (!result.ok) return result;
 
   const format = 'D_MMMM_YYYY';
-  const minDate = result.value.date;
-  const maxDate = calculateMaxDate(minDate, format);
+  const min = result.value.date;
+  const max = calculateMaxDate(min, format);
 
   return ok({
     format: format,
-    minDate: minDate,
-    maxDate: maxDate,
+    min: min,
+    max: max,
   } as const);
 };
 
@@ -219,13 +219,13 @@ export const yearMonthDigitDay = (rawDate: string) => {
   if (!result.ok) return result;
 
   const format = 'D_MMMM_YYYY';
-  const minDate = result.value.date;
-  const maxDate = calculateMaxDate(minDate, format);
+  const min = result.value.date;
+  const max = calculateMaxDate(min, format);
 
   return ok({
     format: format,
-    minDate: minDate,
-    maxDate: maxDate,
+    min: min,
+    max: max,
   } as const);
 };
 
@@ -239,12 +239,12 @@ export const decade = (rawDate: string) => {
   if (!result.ok) return result;
 
   const format = 'YYYYs';
-  const minDate = result.value.date;
-  const maxDate = calculateMaxDate(minDate, format);
+  const min = result.value.date;
+  const max = calculateMaxDate(min, format);
 
   return ok({
     format: format,
-    minDate: minDate,
-    maxDate: maxDate,
+    min: min,
+    max: max,
   } as const);
 };

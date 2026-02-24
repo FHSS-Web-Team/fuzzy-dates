@@ -14,7 +14,7 @@ import {
   yearMonthStringDay,
 } from './inputDateFormats';
 
-export function stringToDate(dateInput: string) {
+export function stringToSimpleDate(dateInput: string) {
   const parsers = [
     year,
     monthStringYear,

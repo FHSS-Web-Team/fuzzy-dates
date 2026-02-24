@@ -4,18 +4,18 @@ import { fuzzyDateJsonSchema } from './schemas';
 
 export type FuzzyDateFormat = (typeof FORMAT_ORDER)[number];
 
-export type FuzzyDate = (typeof MODIFIER_ORDER)[number];
+export type FuzzyDateModifier = (typeof MODIFIER_ORDER)[number];
 
-export type FuzzyDateValue = {
+export type SimpleDate = {
   format: FuzzyDateFormat;
-  minDate: Date;
-  maxDate: Date;
+  min: Date;
+  max: Date;
 };
 
 export type FuzzyDateModel = {
-  modifier: FuzzyDate;
-  start: FuzzyDateValue;
-  end: FuzzyDateValue;
+  modifier: FuzzyDateModifier;
+  start: SimpleDate;
+  end: SimpleDate;
 };
 
 export type FuzzyDateJson = z.infer<typeof fuzzyDateJsonSchema>;

@@ -1,27 +1,28 @@
-import { FuzzyDateModel, FuzzyDate, FuzzyDateValue } from '../helpers/types';
+import {
+  FuzzyDateModel,
+  FuzzyDateModifier,
+  SimpleDate,
+} from '../helpers/types';
 
 export function toGedcomX(model: FuzzyDateModel) {
   const startDate = toSimpleDate(model.start);
   const endDate = toSimpleDate(model.end);
-  const gedcomModifierMap: Record<FuzzyDate, string> = {
+  const gedcomModifierMap: Record<FuzzyDateModifier, string> = {
     NONE: startDate,
     BEFORE: `/${endDate}`,
     AFTER: `${startDate}/`,
-    EARLY: `${startDate}/${endDate}`,
-    MID: `${startDate}/${endDate}`,
-    LATE: `${startDate}/${endDate}`,
     FROM: `${startDate}/${endDate}`,
-    BETWEEN: `${startDate}/${endDate}`,
+    BETWEEN: `A${startDate}/${endDate}`,
     ABOUT: `A${startDate}`,
   };
 
   return gedcomModifierMap[model.modifier];
 }
 
-function toSimpleDate(dateValue: FuzzyDateValue) {
-  const year = dateValue.minDate.getUTCFullYear();
-  const month = dateValue.minDate.getUTCMonth() + 1;
-  const day = dateValue.minDate.getUTCDate();
+function toSimpleDate(dateValue: SimpleDate) {
+  const year = dateValue.min.getUTCFullYear();
+  const month = dateValue.min.getUTCMonth() + 1;
+  const day = dateValue.min.getUTCDate();
   const sign = year >= 0 ? '+' : '-';
   const yearAbs = Math.abs(year);
 

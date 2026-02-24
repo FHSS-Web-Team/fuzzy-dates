@@ -121,10 +121,10 @@ export class FuzzyDate {
    * - Derived from the canonical model.
    * - Always interpreted as UTC.
    */
-  get lowerBound(): Date | null {
-    return this._model.start.minDate === DATE_NEG_INFINITY
+  get earliest(): Date | null {
+    return this._model.start.min === DATE_NEG_INFINITY
       ? null
-      : this._model.start.minDate;
+      : this._model.start.min;
   }
 
   /**
@@ -154,10 +154,10 @@ export class FuzzyDate {
    * - Derived from the canonical model.
    * - Always interpreted as UTC.
    */
-  get upperBound(): Date | null {
-    return this._model.end.maxDate === DATE_POS_INFINITY
+  get latest(): Date | null {
+    return this._model.end.max === DATE_POS_INFINITY
       ? null
-      : this._model.end.maxDate;
+      : this._model.end.max;
   }
 
   /**
@@ -195,13 +195,13 @@ export class FuzzyDate {
       modifier: this._model.modifier,
       start: {
         format: this._model.start.format,
-        minDate: this._model.start.minDate.toISOString(),
-        maxDate: this._model.start.maxDate.toISOString(),
+        min: this._model.start.min.toISOString(),
+        max: this._model.start.max.toISOString(),
       },
       end: {
         format: this._model.end.format,
-        minDate: this._model.end.minDate.toISOString(),
-        maxDate: this._model.end.maxDate.toISOString(),
+        min: this._model.end.min.toISOString(),
+        max: this._model.end.max.toISOString(),
       },
     };
   }
@@ -219,13 +219,13 @@ export class FuzzyDate {
         modifier: safeJson.modifier,
         start: {
           format: safeJson.start.format,
-          minDate: new Date(safeJson.start.minDate),
-          maxDate: new Date(safeJson.start.maxDate),
+          min: new Date(safeJson.start.min),
+          max: new Date(safeJson.start.max),
         },
         end: {
           format: safeJson.end.format,
-          minDate: new Date(safeJson.end.minDate),
-          maxDate: new Date(safeJson.end.maxDate),
+          min: new Date(safeJson.end.min),
+          max: new Date(safeJson.end.max),
         },
       };
 

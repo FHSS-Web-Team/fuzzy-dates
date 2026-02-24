@@ -3,8 +3,8 @@ import { FORMAT_ORDER, MODIFIER_ORDER } from './constants';
 
 const fuzzyDateValueSchema = z.object({
   format: z.enum(FORMAT_ORDER),
-  minDate: z.iso.datetime(),
-  maxDate: z.iso.datetime(),
+  min: z.iso.datetime(),
+  max: z.iso.datetime(),
 });
 
 export const fuzzyDateJsonSchema = z.object({

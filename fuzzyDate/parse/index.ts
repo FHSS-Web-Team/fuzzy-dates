@@ -1,15 +1,5 @@
-import {
-  about,
-  after,
-  before,
-  between,
-  early,
-  from,
-  late,
-  mid,
-  none,
-} from './modifiers';
-import { FuzzyDateFormat, FuzzyDateValue } from '../helpers/types';
+import { about, after, before, between, from, none } from './modifiers';
+import { FuzzyDateFormat, SimpleDate } from '../helpers/types';
 import { err, ok } from '../helpers/result';
 import {
   isMonth,
@@ -36,16 +26,13 @@ export function parse(input: string) {
   // below they are closer to how we handle seasons.
   if (cleanedInput.startsWith('about ')) return about(cleanedInput);
   // family search does +-2 (probably precision) for about
-  if (cleanedInput.startsWith('early ')) return early(cleanedInput);
-  if (cleanedInput.startsWith('mid ')) return mid(cleanedInput);
-  if (cleanedInput.startsWith('late ')) return late(cleanedInput);
   return none(cleanedInput);
 }
 
 // Helpers
-export function getTimes(date: FuzzyDateValue) {
-  const start = date.minDate.getTime();
-  const end = date.maxDate.getTime() + 1; //FIXME: Reconsider - Adds a milisecond for accurate date calculations
+export function getTimes(date: SimpleDate) {
+  const start = date.min.getTime();
+  const end = date.max.getTime() + 1; //FIXME: Reconsider - Adds a milisecond for accurate date calculations
   const half = (end - start) / 2;
   return { start, end, half };
 }

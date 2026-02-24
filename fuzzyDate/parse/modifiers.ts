@@ -1,10 +1,9 @@
-import { getTimes } from '.';
 import { DATE_NEG_INFINITY, DATE_POS_INFINITY } from '../helpers/constants';
 import { err, ok } from '../helpers/result';
-import { stringToDate } from './stringToDate';
+import { stringToSimpleDate } from './stringToDate';
 
 export const none = (cleanedInput: string) => {
-  const result = stringToDate(cleanedInput);
+  const result = stringToSimpleDate(cleanedInput);
   if (!result.ok) return result;
   const date = result.value;
 
@@ -12,19 +11,19 @@ export const none = (cleanedInput: string) => {
     modifier: 'NONE',
     start: {
       format: date.format,
-      minDate: date.minDate,
-      maxDate: date.maxDate,
+      min: date.min,
+      max: date.max,
     },
     end: {
       format: date.format,
-      minDate: date.minDate,
-      maxDate: date.maxDate,
+      min: date.min,
+      max: date.max,
     },
   } as const);
 };
 
 export const before = (cleanedInput: string) => {
-  const result = stringToDate(cleanedInput.slice('before '.length));
+  const result = stringToSimpleDate(cleanedInput.slice('before '.length));
   if (!result.ok) return result;
   const date = result.value;
 
@@ -32,19 +31,19 @@ export const before = (cleanedInput: string) => {
     modifier: 'BEFORE',
     start: {
       format: date.format,
-      minDate: DATE_NEG_INFINITY,
-      maxDate: DATE_NEG_INFINITY,
+      min: DATE_NEG_INFINITY,
+      max: DATE_NEG_INFINITY,
     },
     end: {
       format: date.format,
-      minDate: date.minDate,
-      maxDate: date.maxDate,
+      min: date.min,
+      max: date.max,
     },
   } as const);
 };
 
 export const after = (cleanedInput: string) => {
-  const result = stringToDate(cleanedInput.slice('after '.length));
+  const result = stringToSimpleDate(cleanedInput.slice('after '.length));
   if (!result.ok) return result;
   const date = result.value;
 
@@ -52,19 +51,19 @@ export const after = (cleanedInput: string) => {
     modifier: 'AFTER',
     start: {
       format: date.format,
-      minDate: date.minDate,
-      maxDate: date.maxDate,
+      min: date.min,
+      max: date.max,
     },
     end: {
       format: date.format,
-      minDate: DATE_POS_INFINITY,
-      maxDate: DATE_POS_INFINITY,
+      min: DATE_POS_INFINITY,
+      max: DATE_POS_INFINITY,
     },
   } as const);
 };
 
 export const about = (cleanedInput: string) => {
-  const result = stringToDate(cleanedInput.slice('about '.length));
+  const result = stringToSimpleDate(cleanedInput.slice('about '.length));
   if (!result.ok) return result;
   const date = result.value;
 
@@ -72,13 +71,13 @@ export const about = (cleanedInput: string) => {
     modifier: 'ABOUT',
     start: {
       format: date.format,
-      minDate: date.minDate,
-      maxDate: date.maxDate,
+      min: date.min,
+      max: date.max,
     },
     end: {
       format: date.format,
-      minDate: date.minDate,
-      maxDate: date.maxDate,
+      min: date.min,
+      max: date.max,
     },
   } as const);
 };
@@ -87,8 +86,8 @@ export const between = (cleanedInput: string) => {
   const dates = cleanedInput.slice('between '.length).split(' and ');
   if (dates.length !== 2) return err('Invalid "BETWEEN" modifier.' as const);
 
-  const startResult = stringToDate(dates[0]);
-  const endDateResult = stringToDate(dates[1]);
+  const startResult = stringToSimpleDate(dates[0]);
+  const endDateResult = stringToSimpleDate(dates[1]);
   if (!startResult.ok) return startResult;
   if (!endDateResult.ok) return endDateResult;
   const start = startResult.value;
@@ -98,10 +97,10 @@ export const between = (cleanedInput: string) => {
     modifier: 'BETWEEN',
     start: {
       format: start.format,
-      minDate: start.minDate,
-      maxDate: start.maxDate,
+      min: start.min,
+      max: start.max,
     },
-    end: { format: end.format, minDate: end.minDate, maxDate: end.maxDate },
+    end: { format: end.format, min: end.min, max: end.max },
   } as const);
 };
 
@@ -109,8 +108,8 @@ export const from = (cleanedInput: string) => {
   const dates = cleanedInput.slice('from '.length).split(' to ');
   if (dates.length !== 2) return err('Invalid "FROM" modifier.' as const);
 
-  const startResult = stringToDate(dates[0]);
-  const endDateResult = stringToDate(dates[1]);
+  const startResult = stringToSimpleDate(dates[0]);
+  const endDateResult = stringToSimpleDate(dates[1]);
   if (!startResult.ok) return startResult;
   if (!endDateResult.ok) return endDateResult;
   const start = startResult.value;
@@ -120,73 +119,9 @@ export const from = (cleanedInput: string) => {
     modifier: 'FROM',
     start: {
       format: start.format,
-      minDate: start.minDate,
-      maxDate: start.maxDate,
+      min: start.min,
+      max: start.max,
     },
-    end: { format: end.format, minDate: end.minDate, maxDate: end.maxDate },
-  } as const);
-};
-
-export const early = (cleanedInput: string) => {
-  const result = stringToDate(cleanedInput.slice('early '.length));
-  if (!result.ok) return result;
-  const date = result.value;
-  const { start, half } = getTimes(date);
-
-  return ok({
-    modifier: 'EARLY',
-    start: {
-      format: date.format,
-      minDate: new Date(start),
-      maxDate: new Date(start + half),
-    },
-    end: {
-      format: date.format,
-      minDate: new Date(start),
-      maxDate: new Date(start + half),
-    },
-  } as const);
-};
-
-export const mid = (cleanedInput: string) => {
-  const result = stringToDate(cleanedInput.slice('mid '.length));
-  if (!result.ok) return result;
-  const date = result.value;
-  console.log(date);
-  const { start, half, end } = getTimes(date);
-
-  return ok({
-    modifier: 'MID',
-    start: {
-      format: date.format,
-      minDate: new Date(start + half / 2),
-      maxDate: new Date(end - half / 2),
-    },
-    end: {
-      format: date.format,
-      minDate: new Date(start + half / 2),
-      maxDate: new Date(end - half / 2),
-    },
-  } as const);
-};
-
-export const late = (cleanedInput: string) => {
-  const result = stringToDate(cleanedInput.slice('late '.length));
-  if (!result.ok) return result;
-  const date = result.value;
-  const { half, end } = getTimes(date);
-
-  return ok({
-    modifier: 'LATE',
-    start: {
-      format: date.format,
-      minDate: new Date(end - half),
-      maxDate: date.maxDate,
-    },
-    end: {
-      format: date.format,
-      minDate: new Date(end - half),
-      maxDate: date.maxDate,
-    },
+    end: { format: end.format, min: end.min, max: end.max },
   } as const);
 };
