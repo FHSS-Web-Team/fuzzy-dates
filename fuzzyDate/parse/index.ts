@@ -44,7 +44,7 @@ export function parse(input: string) {
 // Helpers
 export function getTimes(date: FuzzyDateValue) {
   const start = date.minDate.getTime();
-  const end = date.maxDate.getTime() + 1; //Adds a milisecond for accurate date calculations
+  const end = date.maxDate.getTime() + 1; //FIXME: Reconsider - Adds a milisecond for accurate date calculations
   const half = (end - start) / 2;
   return { start, end, half };
 }
