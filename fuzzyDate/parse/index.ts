@@ -29,9 +29,12 @@ export function parse(input: string) {
 
   if (cleanedInput.startsWith('before ')) return before(cleanedInput);
   if (cleanedInput.startsWith('after ')) return after(cleanedInput);
-  if (cleanedInput.startsWith('about ')) return about(cleanedInput);
   if (cleanedInput.startsWith('between ')) return between(cleanedInput);
   if (cleanedInput.startsWith('from ')) return from(cleanedInput);
+  // FIXME: should these be formats so that they can be combined with other modifiers?
+  // notice that the above modifers all use two dates (start and end)
+  // below they are closer to how we handle seasons.
+  if (cleanedInput.startsWith('about ')) return about(cleanedInput);
   if (cleanedInput.startsWith('early ')) return early(cleanedInput);
   if (cleanedInput.startsWith('mid ')) return mid(cleanedInput);
   if (cleanedInput.startsWith('late ')) return late(cleanedInput);

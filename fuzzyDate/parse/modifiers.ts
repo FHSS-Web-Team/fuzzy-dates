@@ -33,7 +33,7 @@ export const before = (cleanedInput: string) => {
     start: {
       format: date.format,
       minDate: DATE_NEG_INFINITY,
-      maxDate: date.minDate,
+      maxDate: DATE_NEG_INFINITY,
     },
     end: {
       format: date.format,
@@ -57,7 +57,7 @@ export const after = (cleanedInput: string) => {
     },
     end: {
       format: date.format,
-      minDate: date.maxDate,
+      minDate: DATE_POS_INFINITY,
       maxDate: DATE_POS_INFINITY,
     },
   } as const);
@@ -153,19 +153,19 @@ export const mid = (cleanedInput: string) => {
   if (!result.ok) return result;
   const date = result.value;
   console.log(date);
-  const { start, half } = getTimes(date);
+  const { start, half, end } = getTimes(date);
 
   return ok({
     modifier: 'MID',
     start: {
       format: date.format,
       minDate: new Date(start + half / 2),
-      maxDate: new Date(start + half),
+      maxDate: new Date(end - half / 2),
     },
     end: {
       format: date.format,
       minDate: new Date(start + half / 2),
-      maxDate: new Date(start + half),
+      maxDate: new Date(end - half / 2),
     },
   } as const);
 };
@@ -174,18 +174,18 @@ export const late = (cleanedInput: string) => {
   const result = stringToDate(cleanedInput.slice('late '.length));
   if (!result.ok) return result;
   const date = result.value;
-  const { start, half } = getTimes(date);
+  const { half, end } = getTimes(date);
 
   return ok({
     modifier: 'LATE',
     start: {
       format: date.format,
-      minDate: new Date(start + half),
+      minDate: new Date(end - half),
       maxDate: date.maxDate,
     },
     end: {
       format: date.format,
-      minDate: new Date(start + half),
+      minDate: new Date(end - half),
       maxDate: date.maxDate,
     },
   } as const);
