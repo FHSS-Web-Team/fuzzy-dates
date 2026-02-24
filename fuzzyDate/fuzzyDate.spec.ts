@@ -110,11 +110,11 @@ describe('Fuzzy Date', () => {
       'before 2000',
       'before jan 2000',
       'before jan 1 2000',
-      // 'about 2000',
+      'about 2000',
       '2000',
-      // 'about jan 2000',
+      'about jan 2000',
       'jan 2000',
-      // 'about jan 1 2000',
+      'about jan 1 2000',
       'jan 1 2000',
       'from 2000 to 2001',
       'from 2000 to jan 2001',
@@ -153,10 +153,15 @@ describe('Fuzzy Date', () => {
       if (!previousSort.ok || !currentSort.ok)
         return assert.fail('failed to parse input');
 
+      // possible ordering
+      // primary date
+      // approximate
+      // range
       const isBefore =
         previousSort.value[0] < currentSort.value[0] ||
-        previousSort.value[1] > currentSort.value[1] ||
-        previous.value.approximate > current.value.approximate;
+        previous.value.approximate > current.value.approximate ||
+        previousSort.value[2] > currentSort.value[2] ||
+        previousSort.value[1] > currentSort.value[1];
       console.log(order[i - 1], '<', order[i], '=', isBefore);
       console.log(
         'previous:',

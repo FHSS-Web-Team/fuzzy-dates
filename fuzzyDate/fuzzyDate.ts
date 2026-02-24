@@ -154,26 +154,42 @@ export class FuzzyDate {
     return this._model.end?.max ?? DATE_POS_INFINITY;
   }
 
-  get sortKeys(): Result<[Date, Date], 'Invalid sort keys'> {
+  get sortKeys(): Result<[Date, Date, Date], 'Invalid sort keys'> {
     if (isRange(this._model)) {
       // left open
       if (this._model.start === null && this._model.end !== null) {
-        return ok([this._model.end.min, DATE_POS_INFINITY]);
+        return ok([
+          this._model.end.min,
+          DATE_POS_INFINITY,
+          this._model.end.max,
+        ]);
       }
 
       // right open
       if (this._model.end === null && this._model.start !== null) {
-        return ok([this._model.start.max, DATE_POS_INFINITY]);
+        return ok([
+          this._model.start.max,
+          DATE_POS_INFINITY,
+          this._model.start.min,
+        ]);
       }
 
       // closed
       if (this._model.start !== null && this._model.end !== null) {
-        return ok([this._model.start.min, this._model.end.max]);
+        return ok([
+          this._model.start.min,
+          this._model.end.max,
+          this._model.end.max,
+        ]);
       }
     } else {
       // simple
       if (this._model.start !== null && this._model.end !== null) {
-        return ok([this._model.start.min, this._model.end.max]);
+        return ok([
+          this._model.start.min,
+          this._model.end.max,
+          this._model.end.max,
+        ]);
       }
     }
 
