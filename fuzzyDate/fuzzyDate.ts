@@ -155,9 +155,9 @@ export class FuzzyDate {
    * - Always interpreted as UTC.
    */
   get upperBound(): Date | null {
-    return this._model.start.maxDate === DATE_POS_INFINITY
+    return this._model.end.maxDate === DATE_POS_INFINITY
       ? null
-      : this._model.start.maxDate;
+      : this._model.end.maxDate;
   }
 
   /**
