@@ -154,14 +154,18 @@ export class FuzzyDate {
     return this._model.end?.max ?? DATE_POS_INFINITY;
   }
 
-  get sortKeys(): Result<[Date, Date, Date], 'Invalid sort keys'> {
+  get sortKeys(): Result<
+    [Date, -1 | 0 | 1, number, boolean],
+    'Invalid sort keys'
+  > {
     if (isRange(this._model)) {
       // left open
       if (this._model.start === null && this._model.end !== null) {
         return ok([
           this._model.end.min,
-          DATE_POS_INFINITY,
-          this._model.end.max,
+          -1,
+          this._model.end.max.getTime() - this._model.end.min.getTime(),
+          this._model.approximate,
         ]);
       }
 
@@ -169,8 +173,9 @@ export class FuzzyDate {
       if (this._model.end === null && this._model.start !== null) {
         return ok([
           this._model.start.max,
-          DATE_POS_INFINITY,
-          this._model.start.min,
+          1,
+          this._model.start.max.getTime() - this._model.start.min.getTime(),
+          this._model.approximate,
         ]);
       }
 
@@ -178,8 +183,9 @@ export class FuzzyDate {
       if (this._model.start !== null && this._model.end !== null) {
         return ok([
           this._model.start.min,
-          this._model.end.max,
-          this._model.end.max,
+          0,
+          this._model.end.max.getTime() - this._model.start.min.getTime(),
+          this._model.approximate,
         ]);
       }
     } else {
@@ -187,8 +193,9 @@ export class FuzzyDate {
       if (this._model.start !== null && this._model.end !== null) {
         return ok([
           this._model.start.min,
-          this._model.end.max,
-          this._model.end.max,
+          0,
+          this._model.end.max.getTime() - this._model.start.min.getTime(),
+          this._model.approximate,
         ]);
       }
     }
