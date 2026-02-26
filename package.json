@@ -27,7 +27,6 @@
     "test": "vitest",
     "test:run": "vitest run",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run build",
     "preversion": "npm run build",
     "postversion": "git push",
     "deploy": "npm run build && npm publish --access public"
