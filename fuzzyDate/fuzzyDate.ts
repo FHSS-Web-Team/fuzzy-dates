@@ -1,9 +1,10 @@
 import { parse } from './parse/index';
 import { normalize } from './normalize/normalize';
 import { toGedcomX } from './gedcomX/toGedcomX';
-import { FuzzyDateModel, isRange } from './helpers/types';
-import { err, ok, Result } from './helpers/result';
+import { FuzzyDateModel } from './helpers/types';
+import { ok } from './helpers/result';
 import { DATE_NEG_INFINITY, DATE_POS_INFINITY } from './helpers/constants';
+import { collate } from './collation/collationKey';
 
 /**
  * Represents an immutable, parsed fuzzy date suitable for genealogy and
@@ -25,9 +26,9 @@ import { DATE_NEG_INFINITY, DATE_POS_INFINITY } from './helpers/constants';
  * ### Design principles
  *
  * - **Immutable**: Instances cannot be mutated after construction.
- * - **Explicit construction**: Instances must be created via `parse()` or
- *   `fromJSON()`. Direct construction via `new` is intentionally disallowed.
- * - **Derived projections**: Query bounds, collation keys, and serializations
+ * - **Explicit construction**: Instances must be created via `parse()`.
+ *   Direct construction via `new` is intentionally disallowed.
+ * - **Derived projections**: Query bounds and collation keys
  *   are all derived from a single internal model to guarantee consistency.
  * - **UTC semantics**: All date calculations and comparisons are performed
  *   using UTC to avoid timezone-related ambiguity.
@@ -37,10 +38,7 @@ import { DATE_NEG_INFINITY, DATE_POS_INFINITY } from './helpers/constants';
  * ### Intended usage
  *
  * - Use `parse()` for untrusted, human-entered input.
- * - Use `fromJSON()` when hydrating from a trusted serialized model
- *   (e.g. database JSON).
- * - Store the JSON model as the canonical representation.
- * - Store `lowerBound`, `upperBound`, and `collationKey` separately for
+ * - Store `lowerBound`, `upperBound`, and `collationKeys` separately for
  *   efficient querying and ordering.
  */
 export class FuzzyDate {
@@ -55,7 +53,7 @@ export class FuzzyDate {
   /**
    * Private constructor to enforce factory-based creation.
    *
-   * Consumers must use {@link FuzzyDate.parse} or {@link FuzzyDate.fromJSON}.
+   * Consumers must use {@link FuzzyDate.parse}.
    */
   private constructor(model: FuzzyDateModel) {
     this._model = model;
@@ -97,26 +95,14 @@ export class FuzzyDate {
    *
    * This bound is intended for **endpoint-in-window** searching:
    * a fuzzy date matches an inclusive search range `[searchStart, searchEnd]`
-   * if **either** its `lowerBound` **or** its `upperBound` falls within the
+   * if **either** its `earliest` **or** its `latest` falls within the
    * search range.
    *
-   * Formally (inclusive):
-   *
    * ```text
-   * (searchStart <= lowerBound <= searchEnd) OR (searchStart <= upperBound <= searchEnd)
+   * (searchStart <= earliest <= searchEnd) OR (searchStart <= latest <= searchEnd)
    * ```
    *
-   * ## Unbounded intervals
-   *
-   * Open-ended intervals are represented with `null`:
-   * - `lowerBound === null` means unbounded in the past (−∞)
-   * - `upperBound === null` means unbounded in the future (+∞)
-   *
-   * When using the predicate above, treat a `null` bound as not satisfying
-   * the endpoint check (i.e., it is not “within” any finite window).
-   *
    * @remarks
-   * - Derived from the canonical model.
    * - Always interpreted as UTC.
    */
   get earliest(): Date {
@@ -128,81 +114,67 @@ export class FuzzyDate {
    *
    * This bound is intended for **endpoint-in-window** searching:
    * a fuzzy date matches an inclusive search range `[searchStart, searchEnd]`
-   * if **either** its `lowerBound` **or** its `upperBound` falls within the
+   * if **either** its `earliest` **or** its `latest` falls within the
    * search range.
    *
-   * Formally (inclusive):
-   *
    * ```text
-   * (searchStart <= lowerBound <= searchEnd) OR (searchStart <= upperBound <= searchEnd)
+   * (searchStart <= earliest <= searchEnd) OR (searchStart <= latest <= searchEnd)
    * ```
    *
-   * ## Unbounded intervals
-   *
-   * Open-ended intervals are represented with `null`:
-   * - `lowerBound === null` means unbounded in the past (−∞)
-   * - `upperBound === null` means unbounded in the future (+∞)
-   *
-   * When using the predicate above, treat a `null` bound as not satisfying
-   * the endpoint check (i.e., it is not “within” any finite window).
-   *
    * @remarks
-   * - Derived from the canonical model.
    * - Always interpreted as UTC.
    */
   get latest(): Date {
     return this._model.end?.max ?? DATE_POS_INFINITY;
   }
 
-  get sortKeys(): Result<
-    [Date, -1 | 0 | 1, number, boolean],
-    'Invalid sort keys'
-  > {
-    if (isRange(this._model)) {
-      // left open
-      if (this._model.start === null && this._model.end !== null) {
-        return ok([
-          this._model.end.min,
-          -1,
-          this._model.end.max.getTime() - this._model.end.min.getTime(),
-          this._model.approximate,
-        ]);
-      }
-
-      // right open
-      if (this._model.end === null && this._model.start !== null) {
-        return ok([
-          this._model.start.max,
-          1,
-          this._model.start.max.getTime() - this._model.start.min.getTime(),
-          this._model.approximate,
-        ]);
-      }
-
-      // closed
-      if (this._model.start !== null && this._model.end !== null) {
-        return ok([
-          this._model.start.min,
-          0,
-          this._model.end.max.getTime() - this._model.start.min.getTime(),
-          this._model.approximate,
-        ]);
-      }
-    } else {
-      // simple
-      if (this._model.start !== null && this._model.end !== null) {
-        return ok([
-          this._model.start.min,
-          0,
-          this._model.end.max.getTime() - this._model.start.min.getTime(),
-          this._model.approximate,
-        ]);
-      }
-    }
-
-    return err('Invalid sort keys');
+  /**
+   * A lexicographically sortable tuple representing this fuzzy date.
+   *
+   * Sort **ascending** by each element in order to achieve correct chronological ordering.
+   *
+   * Tuple structure:
+   *
+   * 1. `primary` (number)
+   *    - Epoch milliseconds used as the primary chronological anchor.
+   *    - For closed ranges and simple dates: the start minimum.
+   *    - For left-open ranges: the end minimum.
+   *    - For right-open ranges: the start maximum.
+   *
+   * 2. `timeRelation` (-1 | 0 | 1)
+   *    - Distinguishes range type.
+   *    - `-1` → left-open range  (… end)
+   *    - `0`  → closed range or simple date
+   *    - `1`  → right-open range (start …)
+   *
+   * 3. `range` (number)
+   *    - Total span of the range in milliseconds.
+   *    - For simple dates, this represents the precision window.
+   *    - Wider ranges sort before smaller ones.
+   *
+   * 4. `approximate` (0 | 1)
+   *    - `0` → approximate
+   *    - `1` → exact
+   *    - Approximate values sort first.
+   *
+   * Example (SQL):
+   *
+   * ```sql
+   * ORDER BY primary ASC,
+   *          timeRelation ASC,
+   *          range ASC,
+   *          approximate ASC
+   * ```
+   */
+  get collationKeys(): readonly [number, -1 | 0 | 1, number, 0 | 1] {
+    return collate(this._model);
   }
 
+  /**
+   * Gets whether the date is marked as approximate.
+   *
+   * @returns True if the underlying model marks the date as approximate; otherwise false.
+   */
   get approximate(): boolean {
     return this._model.approximate;
   }
@@ -224,5 +196,40 @@ export class FuzzyDate {
     if (!result.ok) return result;
     const date = new FuzzyDate(result.value);
     return ok(date);
+  }
+
+  /**
+   * Comparator for sorting {@link FuzzyDate} instances chronologically.
+   *
+   * This method performs a lexicographic ascending comparison using each
+   * instance’s {@link FuzzyDate.collationKeys} tuple.
+   *
+   * Sort precedence (ascending):
+   * 1. Primary epoch anchor (milliseconds)
+   * 2. Time relation (-1 | 0 | 1)
+   * 3. Range span (milliseconds)
+   * 4. Approximate flag (0 = approximate, 1 = exact)
+   *
+   * Designed for use with `Array.prototype.sort`.
+   *
+   * @param a - The first {@link FuzzyDate} to compare.
+   * @param b - The second {@link FuzzyDate} to compare.
+   * @returns
+   * - A negative number if `a` should sort before `b`
+   * - A positive number if `a` should sort after `b`
+   * - `0` if they are considered equivalent for sorting
+   *
+   * @example
+   * ```ts
+   * dates.sort(FuzzyDate.sort);
+   * ```
+   */
+  static sort(a: FuzzyDate, b: FuzzyDate) {
+    return (
+      a.collationKeys[0] - b.collationKeys[0] ||
+      a.collationKeys[1] - b.collationKeys[1] ||
+      a.collationKeys[2] - b.collationKeys[2] ||
+      a.collationKeys[3] - b.collationKeys[3]
+    );
   }
 }

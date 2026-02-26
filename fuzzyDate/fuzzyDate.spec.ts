@@ -28,7 +28,7 @@ describe('Fuzzy Date', () => {
     });
   });
 
-  it('parses date inputs', () => {
+  it('parses simple date input', () => {
     const formats = {
       '1800': '1800',
       'Winter 1800': 'winter 1800',
@@ -82,7 +82,7 @@ describe('Fuzzy Date', () => {
     }
   });
 
-  it('test modifiers parsing', () => {
+  it('parses range inputs', () => {
     const parse = {
       'before 1st of February 1900': 'before 1 February 1900',
       'after 1st of February 1900': 'after 1 February 1900',
@@ -105,7 +105,7 @@ describe('Fuzzy Date', () => {
     });
   });
 
-  it('orders serialized dates in chronological order', () => {
+  it('orders dates in chronological order', () => {
     const order = [
       '1999',
       'before 2000',
@@ -123,18 +123,6 @@ describe('Fuzzy Date', () => {
       'jan 2000',
       'about jan 1 2000',
       '1 jan 2000',
-      // 'from jan 2000 to 2001',
-      // 'from jan 2000 to jan 2001',
-      // 'from jan 2000 to 1 jan 2001',
-      // 'from 1 jan 2000 to 2001',
-      // 'from 1 jan 2000 to jan 2001',
-      // 'from 1 jan 2000 to 1 jan 2001',
-      // 'between jan 2000 and 2001',
-      // 'between jan 2000 and jan 2001',
-      // 'between jan 2000 and 1 jan 2001',
-      // 'between 1 jan 2000 and 2001',
-      // 'between 1 jan 2000 and jan 2001',
-      // 'between 1 jan 2000 and 1 jan 2001',
       'after 1 jan 2000',
       '2 jan 2000',
       'after jan 2000',
@@ -149,25 +137,7 @@ describe('Fuzzy Date', () => {
       if (!previous.ok || !current.ok)
         return assert.fail('failed to parse input');
 
-      const previousSort = previous.value.sortKeys;
-      const currentSort = current.value.sortKeys;
-      if (!previousSort.ok || !currentSort.ok)
-        return assert.fail('failed to parse input');
-
-      // primary date
-      // timeRelation
-      // range
-      // approximate
-      const isBefore =
-        previousSort.value[0] < currentSort.value[0] ||
-        previousSort.value[1] < currentSort.value[1] ||
-        previousSort.value[2] > currentSort.value[2] ||
-        previousSort.value[3] > currentSort.value[3];
-      console.log(order[i - 1], '<', order[i], '=', isBefore);
-      console.log('previous:', previousSort.value);
-      console.log('current:', currentSort.value);
-      console.log('\n');
-      expect(isBefore).toBeTruthy();
+      expect(FuzzyDate.sort(previous.value, current.value) < 0).toBeTruthy();
     }
   });
 });

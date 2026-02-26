@@ -6,10 +6,10 @@ Explore the docs
 
 ## Features
 
-- Handles modifiers like `before`, `after`, `about`, `between`, `from`, `early`, `mid`, `late`.
+- Handles modifiers like `before`, `after`, `about`, `between`, `from`.
 - Normalizes many input shapes (`1st of February 1900`, `Feb 1 1900`, `winter 1890`, `1800s`).
-- Produces inclusive lower/upper bounds for range filtering and a collation key for stable chronological sorting.
-- Outputs a canonical JSON model plus GEDCOM X formal dates for genealogy interoperability.
+- Produces inclusive lower/upper bounds for range filtering and a collation keys for stable chronological sorting.
+- Outputs a GEDCOM X formal dates for genealogy interoperability.
 - ESM + TypeScript ready (`.d.ts` shipped with the package).
 
 ## Installation
@@ -21,20 +21,16 @@ npm i @fhss-web-team/fuzzy-dates
 ## Quick start
 
 ```ts
-import { FuzzyDate } from "@fhss-web-team/fuzzy-dates";
+import { FuzzyDate } from '@fhss-web-team/fuzzy-dates';
 
-const parsed = FuzzyDate.parse("about Feb 1900");
+const parsed = FuzzyDate.parse('about Feb 1900');
 if (!parsed.ok) throw parsed.error;
 
 const date = parsed.value;
 console.log(date.normalized); // "about 1 February 1900"
-console.log(date.lowerBound); // 1899-02-01T00:00:00.000Z (Date)
-console.log(date.upperBound); // 1901-01-31T23:59:59.999Z (Date)
-console.log(date.collationKey); // deterministic string for sorting
-
-// Serialize for storage and hydrate later
-const json = date.toJSON();
-const hydrated = FuzzyDate.fromJSON(json);
+console.log(date.earliest); // 1899-02-01T00:00:00.000Z (Date)
+console.log(date.latest); // 1901-01-31T23:59:59.999Z (Date)
+console.log(date.collationKeys); // deterministic keys for sorting
 ```
 
 ## API snapshot
@@ -43,10 +39,9 @@ const hydrated = FuzzyDate.fromJSON(json);
 - `FuzzyDate.fromJSON(model: FuzzyDateModel)` — rebuild from the canonical JSON model.
 - `FuzzyDate` instance properties:
   - `normalized` — normalized human-readable string.
-  - `lowerBound` / `upperBound` — inclusive Date bounds (or `null` for unbounded).
-  - `collationKey` — sortable string aligned to chronological order.
+  - `earliest` / `latest` — inclusive Date bounds (or `null` for unbounded).
+  - `collationKeys` — tuple of integer keys used for sorting.
   - `formal` — GEDCOM X formal date representation.
-  - `toJSON()` — returns the canonical model.
 
 ## Development
 
