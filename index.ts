@@ -1,1 +1,1 @@
-export { FuzzyDate } from './fuzzyDate/fuzzyDate.js';
+export { FuzzyDate } from './src/fuzzyDate.js';
