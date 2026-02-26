@@ -10,14 +10,7 @@ export type FuzzyDateModel = {
   end: SimpleDate | null;
 };
 
-export type Precision =
-  | 'Year'
-  | 'Season'
-  | 'Month'
-  | 'Day'
-  | 'Hour'
-  | 'Minute'
-  | 'Second';
+export type Precision = 'Year' | 'Month' | 'Day' | 'Hour' | 'Minute' | 'Second';
 
 export function isRange(model: FuzzyDateModel) {
   return (

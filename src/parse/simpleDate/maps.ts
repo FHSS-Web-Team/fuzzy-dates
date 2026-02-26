@@ -6,33 +6,6 @@ export const MONTH_SEASON_MAP = {
   winter: 12,
 } as const;
 
-export function isSeason(
-  input: string
-): input is keyof typeof MONTH_SEASON_MAP {
-  return Object.keys(MONTH_SEASON_MAP).includes(input);
-}
-
-export const SEASON_MONTH_MAP = {
-  1: 'winter',
-  2: 'winter',
-  3: 'spring',
-  4: 'spring',
-  5: 'spring',
-  6: 'summer',
-  7: 'summer',
-  8: 'summer',
-  9: 'fall',
-  10: 'fall',
-  11: 'fall',
-  12: 'winter',
-} as const;
-
-export function isSeasonMonth(
-  input: number
-): input is keyof typeof SEASON_MONTH_MAP {
-  return input >= 1 && input <= 12;
-}
-
 export const MONTH_NAME_MAP = {
   jan: 1,
   january: 1,

@@ -24,8 +24,7 @@ function toSimpleDate(dateValue: SimpleDate | null) {
   if (dateValue.precision === 'Year') return `${sign}${yyyy}`;
 
   const mm = String(month).padStart(2, '0');
-  if (dateValue.precision === 'Month' || dateValue.precision === 'Season')
-    return `${sign}${yyyy}-${mm}`;
+  if (dateValue.precision === 'Month') return `${sign}${yyyy}-${mm}`;
 
   const dd = String(day).padStart(2, '0');
   return `${sign}${yyyy}-${mm}-${dd}`;

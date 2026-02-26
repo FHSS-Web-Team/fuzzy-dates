@@ -28,8 +28,6 @@ describe('Fuzzy Date parse/normalize', () => {
   it('parses simple date input', () => {
     const formats = {
       '1800': '1800',
-      'Winter 1800': 'winter 1800',
-      '1800 Winter': 'winter 1800',
       'Jan 1800': 'January 1800',
       'January 1800': 'January 1800',
       '1800 Jan': 'January 1800',
@@ -63,12 +61,15 @@ describe('Fuzzy Date parse/normalize', () => {
       '    1st    of    February    1900    ': '1 February 1900',
       'feb 1st, 1900': '1 February 1900',
       'February 1st, 1900': '1 February 1900',
-      '  ---___////,,,,    sEpTeMbEr 30  th ,,,   ---// 1984': '30 September 1984',
+      '  ---___////,,,,    sEpTeMbEr 30  th ,,,   ---// 1984':
+        '30 September 1984',
     };
 
     for (const [input, expected] of Object.entries(formats)) {
       const result = FuzzyDate.parse(input);
-      expect(result.ok ? result.value.normalized : result.error).toStrictEqual(expected);
+      expect(result.ok ? result.value.normalized : result.error).toStrictEqual(
+        expected
+      );
     }
   });
 
@@ -77,23 +78,27 @@ describe('Fuzzy Date parse/normalize', () => {
       'before 1st of February 1900': 'before 1 February 1900',
       'after 1st of February 1900': 'after 1 February 1900',
       'about 1st of February 1900': 'about 1 February 1900',
-      'approximately before 1st of February 1900': 'approximately before 1 February 1900',
-      'around after 1st of February 1900': 'approximately after 1 February 1900',
-      'between 1st of February 1900 and 18/03/1905': 'between 1 February 1900 and 18 March 1905',
+      'approximately before 1st of February 1900':
+        'approximately before 1 February 1900',
+      'around after 1st of February 1900':
+        'approximately after 1 February 1900',
+      'between 1st of February 1900 and 18/03/1905':
+        'between 1 February 1900 and 18 March 1905',
       'about between 1st of February 1900 and 18/03/1905':
         'between 1 February 1900 and 18 March 1905',
-      'around between winter 1900 and summer 1901': 'between winter 1900 and summer 1901',
       '  ---___////,,,,    BeTwEeN   1st  Feb  1900   and   18 03 1905   ':
         'between 1 February 1900 and 18 March 1905',
-      'from 1st of February 1900 to 18/03/1905': 'from 1 February 1900 to 18 March 1905',
-      'approximately from winter 1900 to summer 1901': 'between winter 1900 and summer 1901',
+      'from 1st of February 1900 to 18/03/1905':
+        'from 1 February 1900 to 18 March 1905',
       '  ---___////,,,,    FrOm   1st  Feb  1900   to   18 03 1905   ':
         'from 1 February 1900 to 18 March 1905',
     };
 
     for (const [input, expected] of Object.entries(formats)) {
       const result = FuzzyDate.parse(input);
-      expect(result.ok ? result.value.normalized : result.error).toStrictEqual(expected);
+      expect(result.ok ? result.value.normalized : result.error).toStrictEqual(
+        expected
+      );
     }
   });
 

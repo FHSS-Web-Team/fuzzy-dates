@@ -1,4 +1,4 @@
-import { isMonth, isSeason, MONTH_NAME_MAP, MONTH_SEASON_MAP } from './maps';
+import { isMonth, MONTH_NAME_MAP } from './maps';
 import { err, ok } from '../../helpers/result';
 import { Precision } from '../../helpers/types';
 
@@ -7,8 +7,6 @@ export function calculateMaxDate(start: Date, precision: Precision) {
 
   if (precision === 'Year') {
     endDate.setUTCFullYear(endDate.getUTCFullYear() + 1);
-  } else if (precision === 'Season') {
-    endDate.setUTCMonth(endDate.getUTCMonth() + 3);
   } else if (precision === 'Month') {
     endDate.setUTCMonth(endDate.getUTCMonth() + 1);
   } else if (precision === 'Day') {
@@ -55,8 +53,6 @@ function resolveMonth(rawMonth: string) {
   if (monthToken) return ok({ monthNumber: Number(monthToken) - 1 }); //months are zero-based
   if (isMonth(rawMonth))
     return ok({ monthNumber: MONTH_NAME_MAP[rawMonth] - 1 });
-  if (isSeason(rawMonth))
-    return ok({ monthNumber: MONTH_SEASON_MAP[rawMonth] - 1 });
 
   return err('Unknown month.' as const);
 }

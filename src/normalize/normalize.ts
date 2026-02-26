@@ -1,4 +1,3 @@
-import { isSeasonMonth, SEASON_MONTH_MAP } from '../parse/simpleDate/maps';
 import { FuzzyDateModel, isRange, SimpleDate } from '../helpers/types';
 
 export function normalize(model: FuzzyDateModel) {
@@ -35,12 +34,6 @@ function normalizeSimple(input: SimpleDate | null) {
     case 'Year':
       options.year = 'numeric';
       break;
-
-    case 'Season': {
-      const month = date.getUTCMonth() + 1;
-      if (!isSeasonMonth(month)) return '';
-      return `${SEASON_MONTH_MAP[month]} ${date.getUTCFullYear()}`;
-    }
 
     case 'Month':
       options.month = 'long';

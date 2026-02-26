@@ -1,4 +1,3 @@
-import { isSeason } from './maps';
 import { ok } from '../../helpers/result';
 import { calculateMaxDate, parseDateGroups } from './helpers';
 
@@ -27,7 +26,7 @@ export const year = (rawDate: string) => {
   } as const);
 };
 
-// MMM(M) YYYY || SEASON YYYY
+// MMM(M) YYYY
 export const monthStringYear = (rawDate: string) => {
   const pattern = new RegExp(String.raw`^${MONTH_STRING}\s${YEAR}$`);
   const match = pattern.exec(rawDate);
@@ -37,7 +36,7 @@ export const monthStringYear = (rawDate: string) => {
   if (!result.ok) return result;
 
   const monthString = match.groups['month'].toLowerCase();
-  const precision = isSeason(monthString) ? 'Season' : 'Month';
+  const precision = 'Month';
   const min = result.value.date;
   const max = calculateMaxDate(min, precision);
 
@@ -48,7 +47,7 @@ export const monthStringYear = (rawDate: string) => {
   } as const);
 };
 
-// YYYY MMM(M) || YYYY SEASON
+// YYYY MMM(M)
 export const yearMonthString = (rawDate: string) => {
   const pattern = new RegExp(String.raw`^${YEAR}\s${MONTH_STRING}$`);
   const match = pattern.exec(rawDate);
@@ -57,8 +56,7 @@ export const yearMonthString = (rawDate: string) => {
   const result = parseDateGroups(match.groups);
   if (!result.ok) return result;
 
-  const monthString = match.groups['month'].toLowerCase();
-  const precision = isSeason(monthString) ? 'Season' : 'Month';
+  const precision = 'Month';
   const min = result.value.date;
   const max = calculateMaxDate(min, precision);
 
