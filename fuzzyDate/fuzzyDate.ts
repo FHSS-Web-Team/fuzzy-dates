@@ -232,4 +232,27 @@ export class FuzzyDate {
       a.collationKeys[3] - b.collationKeys[3]
     );
   }
+
+  /**
+   * Filters dates using endpoint-in-window semantics.
+   *
+   * A date matches when either endpoint (`earliest` or `latest`) is inside
+   * the inclusive UTC window `[searchStart, searchEnd]`.
+   *
+   * @param searchStart Inclusive window start (UTC).
+   * @param searchEnd Inclusive window end (UTC).
+   * @param dates Collection of fuzzy dates to evaluate.
+   * @returns Sublist of dates that match the query.
+   */
+  static query(
+    searchStart: Date,
+    searchEnd: Date,
+    dates: readonly FuzzyDate[]
+  ): FuzzyDate[] {
+    return dates.filter(
+      (date) =>
+        (searchStart <= date.earliest && date.earliest <= searchEnd) ||
+        (searchStart <= date.latest && date.latest <= searchEnd)
+    );
+  }
 }
