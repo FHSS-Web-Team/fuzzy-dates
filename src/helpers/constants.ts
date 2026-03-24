@@ -1,2 +1,2 @@
-export const DATE_NEG_INFINITY = new Date(-8640000000000000);
-export const DATE_POS_INFINITY = new Date(8640000000000000);
+export const DATE_NEG_INFINITY = new Date(-62135596800000);
+export const DATE_POS_INFINITY = new Date(253402300799999);
