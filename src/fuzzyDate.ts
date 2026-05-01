@@ -1,10 +1,10 @@
-import { parse } from './parse/index';
-import { normalize } from './normalize/normalize';
-import { toGedcomX } from './gedcomX/toGedcomX';
-import { FuzzyDateModel } from './helpers/types';
-import { ok } from './helpers/result';
-import { DATE_NEG_INFINITY, DATE_POS_INFINITY } from './helpers/constants';
-import { collate } from './collation/collationKey';
+import { parse } from './parse/index.js';
+import { normalize } from './normalize/normalize.js';
+import { toGedcomX } from './gedcomX/toGedcomX.js';
+import { FuzzyDateModel } from './helpers/types.js';
+import { ok } from './helpers/result.js';
+import { DATE_NEG_INFINITY, DATE_POS_INFINITY } from './helpers/constants.js';
+import { collate } from './collation/collationKey.js';
 
 /**
  * Represents an immutable, parsed fuzzy date suitable for genealogy and
@@ -250,7 +250,7 @@ export class FuzzyDate {
     dates: readonly FuzzyDate[]
   ): FuzzyDate[] {
     return dates.filter(
-      (date) =>
+      date =>
         (searchStart <= date.earliest && date.earliest <= searchEnd) ||
         (searchStart <= date.latest && date.latest <= searchEnd)
     );

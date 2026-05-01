@@ -1,5 +1,5 @@
-import { ok } from '../../helpers/result';
-import { calculateMaxDate, parseDateGroups } from './helpers';
+import { ok } from '../../helpers/result.js';
+import { calculateMaxDate, parseDateGroups } from './helpers.js';
 
 const DAY = '(?<day>\\d{1,2})';
 const MONTH_DIGIT = '(?<month>\\d{1,2})';

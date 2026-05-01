@@ -1,5 +1,5 @@
-import { ok } from '../helpers/result';
-import { after, before, between, from, none } from './modifiers';
+import { ok } from '../helpers/result.js';
+import { after, before, between, from, none } from './modifiers.js';
 
 // Main Parse Function
 export function parse(input: string) {

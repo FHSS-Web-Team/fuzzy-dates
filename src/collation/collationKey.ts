@@ -1,4 +1,4 @@
-import { FuzzyDateModel, isRange } from '../helpers/types';
+import { FuzzyDateModel, isRange } from '../helpers/types.js';
 
 export function collate(
   model: FuzzyDateModel

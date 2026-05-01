@@ -1,4 +1,4 @@
-import { FuzzyDateModel, isRange, SimpleDate } from '../helpers/types';
+import { FuzzyDateModel, isRange, SimpleDate } from '../helpers/types.js';
 
 export function toGedcomX(model: FuzzyDateModel) {
   const startDate = toSimpleDate(model.start);

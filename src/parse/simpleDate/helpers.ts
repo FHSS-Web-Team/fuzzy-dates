@@ -1,6 +1,6 @@
-import { isMonth, MONTH_NAME_MAP } from './maps';
-import { err, ok } from '../../helpers/result';
-import { Precision } from '../../helpers/types';
+import { isMonth, MONTH_NAME_MAP } from './maps.js';
+import { err, ok } from '../../helpers/result.js';
+import { Precision } from '../../helpers/types.js';
 
 export function calculateMaxDate(start: Date, precision: Precision) {
   const endDate = new Date(start);

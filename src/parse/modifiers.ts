@@ -1,5 +1,5 @@
-import { err, ok } from '../helpers/result';
-import { parseSimpleDate } from './simpleDate/parse';
+import { err, ok } from '../helpers/result.js';
+import { parseSimpleDate } from './simpleDate/parse.js';
 
 export function none(rawInput: string) {
   const result = parseSimpleDate(rawInput);
