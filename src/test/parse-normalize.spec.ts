@@ -63,6 +63,12 @@ describe('Fuzzy Date parse/normalize', () => {
       'February 1st, 1900': '1 February 1900',
       '  ---___////,,,,    sEpTeMbEr 30  th ,,,   ---// 1984':
         '30 September 1984',
+      'twenty-first May 1900': '21 May 1900',
+      'twenty second May 1900': '22 May 1900',
+      'twenty three May 1900': '23 May 1900',
+      'May twenty-fourth 1900': '24 May 1900',
+      'May twenty fifth 1900': '25 May 1900',
+      'May twenty six 1900': '26 May 1900',
     };
 
     for (const [input, expected] of Object.entries(formats)) {

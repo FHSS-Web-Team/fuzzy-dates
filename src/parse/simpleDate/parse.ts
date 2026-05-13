@@ -11,6 +11,7 @@ import {
   yearMonthDigit,
   yearMonthString,
   yearMonthStringDay,
+  dayStringMonthStringYear,
 } from './formats.js';
 
 export function parseSimpleDate(input: string) {
@@ -26,6 +27,7 @@ export function parseSimpleDate(input: string) {
     yearMonthDigit,
     dayMonthDigitYear,
     yearMonthDigitDay,
+    dayStringMonthStringYear,
   ];
 
   for (const parseFormat of parsers) {

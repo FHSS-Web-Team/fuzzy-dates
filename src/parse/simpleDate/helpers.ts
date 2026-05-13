@@ -1,4 +1,4 @@
-import { isMonth, MONTH_NAME_MAP } from './maps.js';
+import { DAY_NAME_MAP, isDay, isMonth, MONTH_NAME_MAP } from './maps.js';
 import { err, ok } from '../../helpers/result.js';
 import { Precision } from '../../helpers/types.js';
 
@@ -33,26 +33,39 @@ export function parseDateGroups(groups: {
 
   let month = 0; //default to January
   if (groups.month) {
-    const result = resolveMonth(groups.month.toLowerCase());
+    const result = resolveMonth(groups.month);
     if (!result.ok) return result;
     month = result.value.monthNumber;
   }
 
   let day = 1; //default to 1st day
   if (groups.day) {
-    const dayToken = /^(?:0?[1-9]|[12][0-9]|3[01])$/.exec(groups.day)?.[0];
-    if (!dayToken) return err('Unknown date format.' as const);
-    day = Number(dayToken);
+    const result = resolveDay(groups.day);
+    if (!result.ok) return result;
+    day = result.value.dayNumber;
   }
 
   return ok({ date: new Date(Date.UTC(year, month, day)) });
 }
 
+function resolveDay(rawDay: string) {
+  const dayToken = /^(?:0?[1-9]|[12][0-9]|3[01])$/.exec(rawDay)?.[0]; //Matches 01-09 or 1-9 or 10-29 or 30-31
+  if (dayToken) return ok({ dayNumber: Number(dayToken) });
+
+  if (isDay(rawDay)) {
+    return ok({ dayNumber: DAY_NAME_MAP[rawDay] });
+  } else {
+    return err('Unknown day.' as const);
+  }
+}
+
 function resolveMonth(rawMonth: string) {
   const monthToken = /^(?:0?[1-9]|1[0-2])$/.exec(rawMonth)?.[0]; //Matches 01-09 or 1-9 or 10-12
   if (monthToken) return ok({ monthNumber: Number(monthToken) - 1 }); //months are zero-based
-  if (isMonth(rawMonth))
-    return ok({ monthNumber: MONTH_NAME_MAP[rawMonth] - 1 });
 
-  return err('Unknown month.' as const);
+  if (isMonth(rawMonth)) {
+    return ok({ monthNumber: MONTH_NAME_MAP[rawMonth] - 1 });
+  } else {
+    return err('Unknown month.' as const);
+  }
 }
