@@ -38,11 +38,26 @@ export function between(rawInput: string) {
   const dates = rawInput.slice('between '.length).split(' and ');
   if (dates.length !== 2) return err('Invalid "BETWEEN" modifier.' as const);
 
-  const startResult = parseSimpleDate(dates[0]);
-  if (!startResult.ok) return startResult;
-
   const endResult = parseSimpleDate(dates[1]);
   if (!endResult.ok) return endResult;
+
+  let startResult;
+
+  // FOR: "Between DD and DD MONTH YYYY"
+  const dayDigit = /^(?:[1-9]|[12][0-9]|3[01])$/;
+  if (dayDigit.test(dates[0])) {
+    const endDateMax = endResult.value.max;
+    const month = endDateMax
+      .toLocaleString('en-US', { month: 'long' })
+      .toLowerCase();
+    const year = endDateMax.getFullYear().toString();
+
+    startResult = parseSimpleDate(`${dates[0]} ${month} ${year}`);
+    if (!startResult.ok) return startResult;
+  } else {
+    startResult = parseSimpleDate(dates[0]);
+    if (!startResult.ok) return startResult;
+  }
 
   return ok({
     start: startResult.value,

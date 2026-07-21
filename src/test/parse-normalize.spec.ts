@@ -81,6 +81,8 @@ describe('Fuzzy Date parse/normalize', () => {
 
   it('parses range inputs', () => {
     const formats = {
+      'between 10 and 18 May 1905': 'between 10 May 1905 and 18 May 1905',
+      'between 10 and 18/03/1905': 'between 10 March 1905 and 18 March 1905',
       'before 1st of February 1900': 'before 1 February 1900',
       'after 1st of February 1900': 'after 1 February 1900',
       'about 1st of February 1900': 'about 1 February 1900',
